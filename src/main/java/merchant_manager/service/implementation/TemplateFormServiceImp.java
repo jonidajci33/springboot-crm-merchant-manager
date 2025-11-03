@@ -22,7 +22,7 @@ public class TemplateFormServiceImp implements TemplateFormService {
     private final TemplateFormRepository templateFormRepository;
     private final TemplateServiceImp templateServiceImp;
 
-    public TemplateFormServiceImp(TemplateFormRepository templateFormRepository, TemplateRepository templateRepository) {
+    public TemplateFormServiceImp(TemplateFormRepository templateFormRepository, TemplateServiceImp templateServiceImp) {
         this.templateFormRepository = templateFormRepository;
         this.templateServiceImp = templateServiceImp;
     }

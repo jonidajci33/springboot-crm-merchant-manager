@@ -57,19 +57,4 @@ public class TemplateFormController {
         List<TemplateForm> fields = templateFormService.getTemplateFields(userId, menuId);
         return ResponseEntity.ok(fields);
     }
-
-    /**
-     * Update an existing field in user's template
-     * PUT /api/template-forms/update?userId=1&menuId=2&fieldId=3
-     */
-    @PutMapping("/update")
-    public ResponseEntity<TemplateForm> updateField(
-            @RequestParam Long userId,
-            @RequestParam Long menuId,
-            @RequestParam Long fieldId,
-            @Valid @RequestBody TemplateForm templateForm
-    ) {
-        TemplateForm updatedForm = templateFormService.updateField(userId, menuId, fieldId, templateForm);
-        return ResponseEntity.ok(updatedForm);
-    }
 }
