@@ -24,7 +24,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableMethodSecurity
 public class SecurityConfiguration {
 
-    private static final String[] WHITE_LIST_URL = {"/api/v1/auth/**", "/user/auth/**", "/ws/**", "/api/email/**"};
+    private static final String[] WHITE_LIST_URL = {"/api/v1/auth/**", "/auth/**", "/ws/**", "/api/email/**"};
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
     private final LogoutHandler logoutHandler;
@@ -36,7 +36,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(WHITE_LIST_URL)
                                 .permitAll()
-                                .requestMatchers("/user/secure/**", "/file/**").hasAnyAuthority(ROLE_SUPERUSER.name())
+                                .requestMatchers("/user/secure/**", "/api/**").hasAnyAuthority(ROLE_SUPERUSER.name())
                                 .requestMatchers("/api/**").hasAnyAuthority(ROLE_USER.name())
                                 .anyRequest()
                                 .authenticated()

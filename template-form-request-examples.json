@@ -1,0 +1,194 @@
+{
+  "endpoints": {
+    "addField": {
+      "method": "POST",
+      "url": "/api/template-forms/add?userId=1&menuId=2",
+      "description": "Add a new field to user's template",
+      "examples": [
+        {
+          "description": "Add a text field",
+          "request": {
+            "type": "text",
+            "options": {
+              "label": "Customer Name",
+              "placeholder": "Enter customer name"
+            },
+            "priority": 1
+          }
+        },
+        {
+          "description": "Add a phone number field",
+          "request": {
+            "type": "phone_number",
+            "options": {
+              "label": "Contact Number",
+              "placeholder": "Enter phone number"
+            },
+            "priority": 2
+          }
+        },
+        {
+          "description": "Add a dropdown field",
+          "request": {
+            "type": "dropdown",
+            "options": {
+              "label": "Status",
+              "values": "Active,Inactive,Pending"
+            },
+            "priority": 3
+          }
+        },
+        {
+          "description": "Add a checkbox field",
+          "request": {
+            "type": "checkbox",
+            "options": {
+              "label": "Terms & Conditions",
+              "description": "I agree to the terms and conditions"
+            },
+            "priority": 4
+          }
+        },
+        {
+          "description": "Add a multiselection field",
+          "request": {
+            "type": "multiselection",
+            "options": {
+              "label": "Services",
+              "values": "Delivery,Pickup,Installation,Support"
+            },
+            "priority": 5
+          }
+        },
+        {
+          "description": "Add a text box (textarea) field",
+          "request": {
+            "type": "text_box",
+            "options": {
+              "label": "Description",
+              "placeholder": "Enter detailed description",
+              "rows": "5"
+            },
+            "priority": 6
+          }
+        },
+        {
+          "description": "Add a number field",
+          "request": {
+            "type": "number",
+            "options": {
+              "label": "Quantity",
+              "min": "1",
+              "max": "100"
+            },
+            "priority": 7
+          }
+        },
+        {
+          "description": "Add a radio button field",
+          "request": {
+            "type": "radiobutton",
+            "options": {
+              "label": "Payment Method",
+              "values": "Cash,Credit Card,Debit Card,PayPal"
+            },
+            "priority": 8
+          }
+        }
+      ]
+    },
+    "updateField": {
+      "method": "PUT",
+      "url": "/api/template-forms/update?userId=1&menuId=2&fieldId=5",
+      "description": "Update an existing field in user's template",
+      "examples": [
+        {
+          "description": "Update field type and options",
+          "request": {
+            "type": "dropdown",
+            "options": {
+              "label": "Updated Status",
+              "values": "New,In Progress,Completed,Cancelled"
+            },
+            "priority": 2
+          }
+        },
+        {
+          "description": "Update priority only",
+          "request": {
+            "type": "text",
+            "options": {
+              "label": "Customer Name",
+              "placeholder": "Enter customer name"
+            },
+            "priority": 10
+          }
+        }
+      ]
+    },
+    "getFields": {
+      "method": "GET",
+      "url": "/api/template-forms?userId=1&menuId=2",
+      "description": "Get all fields for a user's template (ordered by priority)",
+      "response_example": [
+        {
+          "id": 1,
+          "template": {
+            "id": 5,
+            "user": {
+              "id": 1
+            },
+            "menu": {
+              "id": 2
+            }
+          },
+          "key": "auto_generated_unique_key",
+          "type": "text",
+          "options": {
+            "label": "Customer Name",
+            "placeholder": "Enter customer name"
+          },
+          "priority": 1
+        },
+        {
+          "id": 2,
+          "template": {
+            "id": 5
+          },
+          "key": "auto_generated_unique_key_2",
+          "type": "phone_number",
+          "options": {
+            "label": "Contact Number",
+            "placeholder": "Enter phone number"
+          },
+          "priority": 2
+        }
+      ]
+    },
+    "removeField": {
+      "method": "DELETE",
+      "url": "/api/template-forms/remove?userId=1&menuId=2&fieldId=3",
+      "description": "Remove a field from user's template",
+      "note": "No request body required. Returns 204 No Content on success."
+    }
+  },
+  "fieldTypes": {
+    "available_types": [
+      "text",
+      "phone_number",
+      "text_box",
+      "multiselection",
+      "dropdown",
+      "checkbox",
+      "radiobutton",
+      "number"
+    ],
+    "description": "These are the valid field types defined in FieldType.java enum"
+  },
+  "notes": {
+    "key_field": "The 'key' field is auto-generated on save using a unique hash. You don't need to provide it.",
+    "priority": "Priority determines the order of fields. Lower numbers appear first.",
+    "options": "The options field is a flexible JSON object that can contain any key-value pairs relevant to the field type.",
+    "template_lookup": "The system automatically finds the template using userId and menuId, so you don't need to provide template information."
+  }
+}

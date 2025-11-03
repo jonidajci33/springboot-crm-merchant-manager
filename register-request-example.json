@@ -1,0 +1,29 @@
+{
+  "register": {
+    "endpoint": "POST /auth/register",
+    "description": "Register a new user account",
+    "request": {
+      "firstname": "John",
+      "lastname": "Doe",
+      "companyName": "Acme Corporation",
+      "phone": "1234567890",
+      "jobTitle": "Sales Manager",
+      "email": "john.doe@example.com",
+      "username": "johndoe123",
+      "password": "SecurePass123!"
+    }
+  },
+  "login": {
+    "endpoint": "POST /api/v1/auth/authenticate",
+    "description": "Login with username and password",
+    "request": {
+      "username": "johndoe123",
+      "password": "SecurePass123!"
+    },
+    "response_example": {
+      "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+      "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+      "message": "Authentication successful"
+    }
+  }
+}

@@ -9,7 +9,7 @@ import merchant_manager.models.enums.TokenType;
 public class Token {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Integer id;
 
     @Column(unique = true)

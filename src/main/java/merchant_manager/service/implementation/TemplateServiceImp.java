@@ -1,5 +1,6 @@
 package merchant_manager.service.implementation;
 
+import merchant_manager.customExceptions.CustomExceptions;
 import merchant_manager.models.Menu;
 import merchant_manager.models.Template;
 import merchant_manager.models.User;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TemplateServiceImp implements TemplateService {
@@ -32,7 +34,10 @@ public class TemplateServiceImp implements TemplateService {
     }
 
     @Override
-    public void updateTemplate(Template template) {
-
+    public Template findByUserIdAndMenuId(Long userId, Long menuId) {
+        return templateRepository.findByUserIdAndMenuId(userId, menuId)
+                .orElseThrow(() -> new CustomExceptions.ResourceNotFoundException(
+                        "Template not found for user ID: " + userId + " and menu ID: " + menuId));
     }
+
 }

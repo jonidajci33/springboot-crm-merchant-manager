@@ -3,10 +3,12 @@ package merchant_manager.service;
 import merchant_manager.models.Template;
 import merchant_manager.models.User;
 
+import java.util.Optional;
+
 public interface TemplateService {
 
     void addDefaultTemplateToUser(User user);
 
-    void updateTemplate(Template template);
+    Template findByUserIdAndMenuId(Long userId, Long menuId);
 
 }

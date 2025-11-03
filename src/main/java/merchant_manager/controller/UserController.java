@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/auth")
 public class UserController {
 
     private final UserServiceImp userServiceImp;
@@ -20,13 +20,7 @@ public class UserController {
         this.userServiceImp = userServiceImp;
     }
 
-    @GetMapping(value = "/secure/pendingUsers")
-    public ResponseEntity<List<User>> getPendingUsers(){
-        List<User> users =  userServiceImp.getPendingUser();
-        return ResponseEntity.ok(users);
-    }
-
-    @PostMapping("/auth/register")
+    @PostMapping("/register")
     public ResponseEntity<User> register(
             @Valid @RequestBody RegisterRequest request
     ) {
@@ -34,11 +28,4 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PutMapping("/secure/completeUserRegister")
-    public ResponseEntity<User> setUsernameAndPassword(
-            @Valid @RequestBody SetPassUsernameRequest request
-    ) {
-        User user = userServiceImp.setPassAndUsername(request);
-        return ResponseEntity.ok(user);
-    }
 }

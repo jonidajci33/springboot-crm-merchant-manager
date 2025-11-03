@@ -7,6 +7,7 @@ import merchant_manager.customExceptions.CustomExceptions;
 import merchant_manager.emailService.EmailService;
 import merchant_manager.models.User;
 import merchant_manager.models.enums.AccountStatus;
+import merchant_manager.models.enums.Role;
 import merchant_manager.repository.UserRepository;
 import merchant_manager.service.UserService;
 import org.springframework.security.core.Authentication;
@@ -94,6 +95,7 @@ public class UserServiceImp implements UserService {
             user.setLastName(request.getLastname());
             user.setEmail(request.getEmail());
             user.setPhone(request.getPhone());
+            user.setRole(Role.ROLE_USER);
             return save(user);
         }
         throw new CustomExceptions.CustomValidationException("Username already exists");
