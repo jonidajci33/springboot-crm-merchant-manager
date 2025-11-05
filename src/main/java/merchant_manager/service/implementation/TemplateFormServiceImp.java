@@ -21,16 +21,19 @@ public class TemplateFormServiceImp implements TemplateFormService {
 
     private final TemplateFormRepository templateFormRepository;
     private final TemplateServiceImp templateServiceImp;
+    private final UserServiceImp userServiceImp;
 
-    public TemplateFormServiceImp(TemplateFormRepository templateFormRepository, TemplateServiceImp templateServiceImp) {
+    public TemplateFormServiceImp(TemplateFormRepository templateFormRepository, TemplateServiceImp templateServiceImp, UserServiceImp userServiceImp) {
         this.templateFormRepository = templateFormRepository;
         this.templateServiceImp = templateServiceImp;
+        this.userServiceImp = userServiceImp;
     }
 
     @Override
     @Transactional
-    public List<TemplateForm> addFieldToTemplate(Long userId, Long menuId, List<TemplateForm> templateForm) {
+    public List<TemplateForm> addFieldToTemplate(Long menuId, List<TemplateForm> templateForm) {
         try {
+            Long userId = userServiceImp.getLoggedUser().getId();
             List<TemplateForm> formList = new ArrayList<>();
             // Find the template by userId and menuId
             Template template = templateServiceImp.findByUserIdAndMenuId(userId, menuId);
@@ -60,7 +63,7 @@ public class TemplateFormServiceImp implements TemplateFormService {
     public void removeFieldFromTemplate(List<String> key) {
         try {
             for (String keyCurrent : key) {
-
+                removeByKey(keyCurrent);
             }
             log.info("Removed field from template. Key: {}", key);
 
@@ -91,6 +94,10 @@ public class TemplateFormServiceImp implements TemplateFormService {
 
     public TemplateForm findByKey(String key) {
         return templateFormRepository.findByKey(key).orElseThrow(() -> new CustomExceptions.ResourceNotFoundException("Template not found for user ID: " + key));
+    }
+
+    private void removeByKey(String key) {
+        templateFormRepository.deleteByKey(key);
     }
 
 }

@@ -32,6 +32,9 @@ public class TemplateForm extends BaseModel{
     @Column(name = "key", unique = true, nullable = false)
     private String key;
 
+    @Column(name = "label", nullable = false)
+    private String label;
+
     @Enumerated(EnumType.STRING)
     private FieldType type;
 

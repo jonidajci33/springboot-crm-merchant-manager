@@ -25,11 +25,10 @@ public class TemplateFormController {
      */
     @PostMapping("/add")
     public ResponseEntity<List<TemplateForm>> addFieldToTemplate(
-            @RequestParam Long userId,
             @RequestParam Long menuId,
             @Valid @RequestBody List<TemplateForm> templateForm
     ) {
-        List<TemplateForm> savedForm = templateFormService.addFieldToTemplate(userId, menuId, templateForm);
+        List<TemplateForm> savedForm = templateFormService.addFieldToTemplate(menuId, templateForm);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedForm);
     }
 

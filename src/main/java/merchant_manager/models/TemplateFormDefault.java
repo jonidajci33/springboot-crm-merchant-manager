@@ -30,6 +30,9 @@ public class TemplateFormDefault extends BaseModel{
     @Column(name = "key", unique = true, nullable = false)
     private String key;
 
+    @Column(name = "label", nullable = false)
+    private String label;
+
     @Enumerated(EnumType.STRING)
     private FieldType type;
 
@@ -39,6 +42,10 @@ public class TemplateFormDefault extends BaseModel{
 
     @Column(name = "priority", unique = true, nullable = false)
     private Long priority;
+
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
+    private Map<String, String> style;
 
     @PrePersist
     private void generateKey() {

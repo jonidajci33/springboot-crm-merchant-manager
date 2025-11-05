@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface TemplateFormService {
 
-    List<TemplateForm> addFieldToTemplate(Long userId, Long menuId, List<TemplateForm> templateForm);
+    List<TemplateForm> addFieldToTemplate(Long menuId, List<TemplateForm> templateForm);
 
     void removeFieldFromTemplate(List<String> keys);
 
