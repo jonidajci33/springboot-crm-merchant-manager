@@ -24,4 +24,6 @@ public interface TemplateFormValueDefaultRepository extends JpaRepository<Templa
     List<TemplateFormValueDefault> findByTemplateIdAndRecordIds(
             @Param("templateId") Long templateId,
             @Param("recordIds") List<Long> recordIds);
+
+    TemplateFormValueDefault findByTemplateFormDefaultIdAndRecordId(Long templateFormId, Long recordId);
 }

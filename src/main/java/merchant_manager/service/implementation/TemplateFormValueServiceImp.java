@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class TemplateFormValueServiceImp {
+public class TemplateFormValueServiceImp implements TemplateFormValueService {
 
     private final TemplateValueFormRepository templateValueFormRepository;
     private final TemplateFormServiceImp templateFormServiceImp;

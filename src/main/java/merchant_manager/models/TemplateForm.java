@@ -42,8 +42,9 @@ public class TemplateForm extends BaseModel{
     @Column(columnDefinition = "jsonb")
     private Map<String, String> options;
 
-    @Column(name = "priority", unique = true, nullable = false)
-    private Long priority;
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
+    private Map<String, String> formProps;
 
     @PrePersist
     private void generateKey() {

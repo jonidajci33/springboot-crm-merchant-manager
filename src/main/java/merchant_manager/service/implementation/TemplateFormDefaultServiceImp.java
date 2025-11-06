@@ -34,7 +34,7 @@ public class TemplateFormDefaultServiceImp implements TemplateFormDefaultService
     }
 
     @Override
-    public TemplateFormDefault getColumnByKey(String key) {
+    public TemplateFormDefault getByKey(String key) {
         return templateFormDefaultRepository.findByKey(key)
                 .orElseThrow(() -> new CustomExceptions.ResourceNotFoundException(
                         "Column not found with key: " + key));

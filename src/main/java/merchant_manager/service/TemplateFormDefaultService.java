@@ -21,7 +21,7 @@ public interface TemplateFormDefaultService {
      * @param key The column key
      * @return Column definition
      */
-    TemplateFormDefault getColumnByKey(String key);
+    TemplateFormDefault getByKey(String key);
 
     List<TemplateFormDefault> addFieldToDefaultTemplate(Long menuId, List<TemplateFormDefault> templateForm);
 }

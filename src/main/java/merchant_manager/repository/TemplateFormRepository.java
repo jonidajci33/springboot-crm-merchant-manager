@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface TemplateFormRepository extends JpaRepository<TemplateForm,Long> {
 
-    List<TemplateForm> findByTemplateIdOrderByPriorityAsc(Long templateId);
+    List<TemplateForm> findByTemplateId(Long templateId);
 
     void deleteByIdAndTemplateId(Long id, Long templateId);
 

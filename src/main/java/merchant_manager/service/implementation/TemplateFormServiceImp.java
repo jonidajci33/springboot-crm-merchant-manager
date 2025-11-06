@@ -83,7 +83,7 @@ public class TemplateFormServiceImp implements TemplateFormService {
             Template template = templateServiceImp.findByUserIdAndMenuId(userId, menuId);
 
             // Get all fields for this template ordered by priority
-            return templateFormRepository.findByTemplateIdOrderByPriorityAsc(template.getId());
+            return templateFormRepository.findByTemplateId(template.getId());
 
         } catch (CustomExceptions.ResourceNotFoundException e) {
             throw e;

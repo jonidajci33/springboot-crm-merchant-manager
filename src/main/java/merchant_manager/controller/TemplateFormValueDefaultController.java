@@ -2,32 +2,29 @@ package merchant_manager.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import merchant_manager.models.DTO.AddValueRequest;
-import merchant_manager.models.TemplateForm;
-import merchant_manager.service.implementation.TemplateFormServiceImp;
+import merchant_manager.service.implementation.TemplateFormValueDefaultServiceImp;
 import merchant_manager.service.implementation.TemplateFormValueServiceImp;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/template-forms-value")
-@Tag(name = "Template Form Value", description = "APIs for managing template form values")
+@RequestMapping("/api/template-forms-value-default")
+@Tag(name = "Template Form Value Default", description = "APIs for managing template form values")
 @SecurityRequirement(name = "bearerAuth")
-public class TemplateFormValueController {
+public class TemplateFormValueDefaultController {
 
-    private final TemplateFormValueServiceImp templateFormValueServiceImp;
+    private final TemplateFormValueDefaultServiceImp templateFormValueServiceImp;
 
-    public TemplateFormValueController(TemplateFormValueServiceImp templateFormValueServiceImp) {
+    public TemplateFormValueDefaultController(TemplateFormValueDefaultServiceImp templateFormValueServiceImp) {
         this.templateFormValueServiceImp = templateFormValueServiceImp;
     }
 
@@ -50,8 +47,8 @@ public class TemplateFormValueController {
             @Parameter(description = "List of values to add to the form", required = true)
             @Valid @RequestBody List<AddValueRequest> addValueRequests
     ) {
-        templateFormValueServiceImp.addValuesToForm(menuId, recordId, addValueRequests);
+        templateFormValueServiceImp.addDefaultValuesToForm(menuId, recordId, addValueRequests);
         return ResponseEntity.noContent().build();
     }
-}
 
+}

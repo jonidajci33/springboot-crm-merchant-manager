@@ -12,10 +12,10 @@ import java.util.Optional;
 @Repository
 public interface TemplateFormDefaultRepository extends JpaRepository<TemplateFormDefault,Long> {
 
-    List<TemplateFormDefault> findByTemplateIdOrderByPriorityAsc(Long templateId);
+    List<TemplateFormDefault> findByTemplateId(Long templateId);
 
     Optional<TemplateFormDefault> findByKey(String key);
 
-    @Query("SELECT tfd FROM TemplateFormDefault tfd WHERE tfd.template.id = :templateId ORDER BY tfd.priority ASC")
+    @Query("SELECT tfd FROM TemplateFormDefault tfd WHERE tfd.template.id = :templateId")
     List<TemplateFormDefault> findAllByTemplateId(@Param("templateId") Long templateId);
 }

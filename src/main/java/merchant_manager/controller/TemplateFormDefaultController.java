@@ -64,7 +64,7 @@ public class TemplateFormDefaultController {
             @Parameter(description = "Column key", required = true)
             @PathVariable String key
     ) {
-        TemplateFormDefault column = templateFormDefaultService.getColumnByKey(key);
+        TemplateFormDefault column = templateFormDefaultService.getByKey(key);
         return ResponseEntity.ok(column);
     }
 
