@@ -1,13 +1,14 @@
 package merchant_manager.models.enums;
 
 public enum FieldType {
-    text,
-    phone_number,
-    text_box,
-    multiselection,
-    dropdown,
-    checkbox,
-    radiobutton,
-    number
+    TEXT,
+    PHONE_NUMBER,
+    TEXT_BOX,
+    MULTISELECTION,
+    DROPDOWN,
+    CHECKBOX,
+    RADIOBUTTON,
+    NUMBER,
+    EMAIL
 }
 

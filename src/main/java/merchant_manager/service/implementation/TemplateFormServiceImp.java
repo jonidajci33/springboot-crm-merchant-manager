@@ -76,8 +76,9 @@ public class TemplateFormServiceImp implements TemplateFormService {
     }
 
     @Override
-    public List<TemplateForm> getTemplateFields(Long userId, Long menuId) {
+    public List<TemplateForm> getTemplateFields(Long menuId) {
         try {
+            Long userId = userServiceImp.getLoggedUser().getId();
             // Find the template by userId and menuId
             Template template = templateServiceImp.findByUserIdAndMenuId(userId, menuId);
 

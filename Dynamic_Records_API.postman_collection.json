@@ -1,0 +1,650 @@
+{
+	"info": {
+		"_postman_id": "dynamic-records-api-collection",
+		"name": "Dynamic Records API - Merchant Manager",
+		"description": "Complete API collection for Dynamic Records with Template Form Default endpoints.\n\n**Configuration:**\n- User ID: 3\n- Menu ID: 4\n- Template ID: 1\n\n**Features:**\n- Get column definitions (table headers)\n- Get dynamic records with filtering and pagination\n- Add columns to default template\n\n**Before using:**\n1. Set the `baseUrl` variable\n2. Set the `token` variable (JWT Bearer token)\n3. Adjust `menuId` if needed",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Template Form Default",
+			"item": [
+				{
+					"name": "Get Columns by Menu ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/template-forms-default/template/{{menuId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"template-forms-default",
+								"template",
+								"{{menuId}}"
+							]
+						},
+						"description": "Retrieves all column definitions (table headers) for a specific menu.\n\n**Use this to:**\n- Build table headers in your frontend\n- Get column metadata (type, priority, style)\n- Cache on frontend (columns rarely change)\n\n**Response includes:**\n- Column ID\n- Key (unique identifier)\n- Label (display name)\n- Type (TEXT, EMAIL, NUMBER, SELECT, etc.)\n- Priority (column order)\n- Options (for SELECT fields)\n- Style (CSS properties)"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/template-forms-default/template/4",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"template-forms-default",
+										"template",
+										"4"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"key\": \"company_name_key_001\",\n        \"label\": \"Company Name\",\n        \"type\": \"TEXT\",\n        \"priority\": 1,\n        \"options\": null,\n        \"style\": {\n            \"width\": \"200px\"\n        },\n        \"template\": {\n            \"id\": 1,\n            \"user\": {\n                \"id\": 3\n            },\n            \"menu\": {\n                \"id\": 4\n            }\n        }\n    },\n    {\n        \"id\": 2,\n        \"key\": \"contact_person_key_002\",\n        \"label\": \"Contact Person\",\n        \"type\": \"TEXT\",\n        \"priority\": 2,\n        \"options\": null,\n        \"style\": {\n            \"width\": \"180px\"\n        }\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Get Column by Key",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/template-forms-default/column/company_name_key_001",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"template-forms-default",
+								"column",
+								"company_name_key_001"
+							]
+						},
+						"description": "Retrieves a specific column definition by its unique key.\n\n**Use this to:**\n- Get details for a specific column\n- Validate column existence\n- Fetch column metadata"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Fields to Default Template",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n    {\n        \"label\": \"Company Website\",\n        \"type\": \"TEXT\",\n        \"priority\": 9,\n        \"options\": null,\n        \"style\": {\n            \"width\": \"200px\"\n        }\n    },\n    {\n        \"label\": \"Number of Employees\",\n        \"type\": \"NUMBER\",\n        \"priority\": 10,\n        \"options\": null,\n        \"style\": {\n            \"width\": \"150px\"\n        }\n    },\n    {\n        \"label\": \"Lead Source\",\n        \"type\": \"SELECT\",\n        \"priority\": 11,\n        \"options\": {\n            \"website\": \"Website\",\n            \"referral\": \"Referral\",\n            \"cold_call\": \"Cold Call\",\n            \"social_media\": \"Social Media\"\n        },\n        \"style\": {\n            \"width\": \"150px\"\n        }\n    }\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/template-forms-default/add?menuId={{menuId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"template-forms-default",
+								"add"
+							],
+							"query": [
+								{
+									"key": "menuId",
+									"value": "{{menuId}}"
+								}
+							]
+						},
+						"description": "Adds new column definitions to a default template.\n\n**Restrictions:**\n- SUPERUSER role only\n\n**Field Types:**\n- TEXT\n- EMAIL\n- NUMBER\n- DATE\n- SELECT (requires options)\n\n**Automatic:**\n- Key generation (if not provided)\n- Audit fields (createdAt, createdBy, etc.)"
+					},
+					"response": []
+				}
+			],
+			"description": "APIs for managing template form column definitions.\n\nThese endpoints allow you to:\n- Retrieve column structures (table headers)\n- Add new columns to templates\n- Get individual column details"
+		},
+		{
+			"name": "Dynamic Records",
+			"item": [
+				{
+					"name": "Get Records (Simple - No Columns)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/dynamic-records/template/{{menuId}}?page=0&size=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"dynamic-records",
+								"template",
+								"{{menuId}}"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0",
+									"description": "Page number (0-based)"
+								},
+								{
+									"key": "size",
+									"value": "10",
+									"description": "Page size (records per page)"
+								}
+							]
+						},
+						"description": "Retrieves dynamic records with pagination (without column definitions).\n\n**Recommended approach:**\n1. Fetch columns once using GET /api/template-forms-default/template/{menuId}\n2. Use this endpoint for records (with pagination/filtering)\n\n**Benefits:**\n- Smaller payload\n- Faster response\n- Better caching strategy"
+					},
+					"response": [
+						{
+							"name": "Success Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/dynamic-records/template/4?page=0&size=10",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"dynamic-records",
+										"template",
+										"4"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "size",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"records\": [\n        {\n            \"recordId\": 1,\n            \"fields\": {\n                \"company_name_key_001\": \"Acme Corporation\",\n                \"contact_person_key_002\": \"John Smith\",\n                \"email_key_003\": \"john.smith@acme.com\",\n                \"phone_key_004\": \"555-0101\",\n                \"status_key_005\": \"active\",\n                \"revenue_key_006\": \"5000000\",\n                \"industry_key_007\": \"Technology\",\n                \"location_key_008\": \"New York, NY\"\n            }\n        }\n    ],\n    \"totalRecords\": 10,\n    \"currentPage\": 0,\n    \"pageSize\": 10,\n    \"totalPages\": 1\n}"
+						}
+					]
+				},
+				{
+					"name": "Query Records with Filters",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"menuId\": {{menuId}},\n    \"page\": 0,\n    \"size\": 10,\n    \"sortBy\": \"company_name_key_001\",\n    \"sortDirection\": \"ASC\",\n    \"filters\": [\n        {\n            \"fieldKey\": \"status_key_005\",\n            \"operator\": \"EQUALS\",\n            \"value\": \"active\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/dynamic-records/query-simple",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"dynamic-records",
+								"query-simple"
+							]
+						},
+						"description": "Query dynamic records with filtering, sorting, and pagination.\n\n**Filter Operators:**\n- EQUALS - Exact match (case-insensitive)\n- CONTAINS - Contains substring\n- STARTS_WITH - Starts with string\n- ENDS_WITH - Ends with string\n- GREATER_THAN - Numeric comparison\n- LESS_THAN - Numeric comparison\n\n**Multiple filters:** Applied with AND logic"
+					},
+					"response": []
+				},
+				{
+					"name": "Filter by Status - Active",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"menuId\": {{menuId}},\n    \"page\": 0,\n    \"size\": 20,\n    \"filters\": [\n        {\n            \"fieldKey\": \"status_key_005\",\n            \"operator\": \"EQUALS\",\n            \"value\": \"active\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/dynamic-records/query-simple",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"dynamic-records",
+								"query-simple"
+							]
+						},
+						"description": "Get all active companies (should return 6 records)"
+					},
+					"response": []
+				},
+				{
+					"name": "Filter by Revenue - Greater Than 5M",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"menuId\": {{menuId}},\n    \"page\": 0,\n    \"size\": 20,\n    \"filters\": [\n        {\n            \"fieldKey\": \"revenue_key_006\",\n            \"operator\": \"GREATER_THAN\",\n            \"value\": \"5000000\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/dynamic-records/query-simple",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"dynamic-records",
+								"query-simple"
+							]
+						},
+						"description": "Get companies with revenue greater than $5M"
+					},
+					"response": []
+				},
+				{
+					"name": "Search by Company Name",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"menuId\": {{menuId}},\n    \"page\": 0,\n    \"size\": 20,\n    \"filters\": [\n        {\n            \"fieldKey\": \"company_name_key_001\",\n            \"operator\": \"CONTAINS\",\n            \"value\": \"Tech\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/dynamic-records/query-simple",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"dynamic-records",
+								"query-simple"
+							]
+						},
+						"description": "Search for companies with 'Tech' in their name"
+					},
+					"response": []
+				},
+				{
+					"name": "Multiple Filters - Active + High Revenue",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"menuId\": {{menuId}},\n    \"page\": 0,\n    \"size\": 20,\n    \"sortBy\": \"revenue_key_006\",\n    \"sortDirection\": \"DESC\",\n    \"filters\": [\n        {\n            \"fieldKey\": \"status_key_005\",\n            \"operator\": \"EQUALS\",\n            \"value\": \"active\"\n        },\n        {\n            \"fieldKey\": \"revenue_key_006\",\n            \"operator\": \"GREATER_THAN\",\n            \"value\": \"5000000\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/dynamic-records/query-simple",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"dynamic-records",
+								"query-simple"
+							]
+						},
+						"description": "Get active companies with revenue > $5M, sorted by revenue descending"
+					},
+					"response": []
+				},
+				{
+					"name": "Sort by Company Name",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"menuId\": {{menuId}},\n    \"page\": 0,\n    \"size\": 20,\n    \"sortBy\": \"company_name_key_001\",\n    \"sortDirection\": \"ASC\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/dynamic-records/query-simple",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"dynamic-records",
+								"query-simple"
+							]
+						},
+						"description": "Get all records sorted alphabetically by company name"
+					},
+					"response": []
+				}
+			],
+			"description": "APIs for querying dynamic records with filtering, sorting, and pagination.\n\n**Recommended workflow:**\n1. Fetch columns once (cache them)\n2. Query records as needed\n3. Apply filters/sorting for user interactions\n4. Paginate through results"
+		},
+		{
+			"name": "Template Forms (User-Specific)",
+			"item": [
+				{
+					"name": "Get Template Fields",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/template-forms?menuId={{menuId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"template-forms"
+							],
+							"query": [
+								{
+									"key": "menuId",
+									"value": "{{menuId}}"
+								}
+							]
+						},
+						"description": "Get user-specific template fields (customized by user).\n\n**Note:** This is different from default templates.\n- TemplateFormDefault = System-wide columns\n- TemplateForm = User-customized columns"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Fields to User Template",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n    {\n        \"label\": \"Custom Field 1\",\n        \"type\": \"TEXT\",\n        \"priority\": 1\n    },\n    {\n        \"label\": \"Custom Field 2\",\n        \"type\": \"NUMBER\",\n        \"priority\": 2\n    }\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/template-forms/add?menuId={{menuId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"template-forms",
+								"add"
+							],
+							"query": [
+								{
+									"key": "menuId",
+									"value": "{{menuId}}"
+								}
+							]
+						},
+						"description": "Add custom fields to user's template"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Fields from User Template",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n    \"field_key_1\",\n    \"field_key_2\"\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/template-forms/remove",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"template-forms",
+								"remove"
+							]
+						},
+						"description": "Remove fields from user's template by keys"
+					},
+					"response": []
+				}
+			],
+			"description": "APIs for managing user-specific template forms.\n\nThese allow individual users to customize their own forms."
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8445",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "your_jwt_token_here",
+			"type": "string"
+		},
+		{
+			"key": "menuId",
+			"value": "4",
+			"type": "string"
+		},
+		{
+			"key": "templateId",
+			"value": "1",
+			"type": "string"
+		}
+	]
+}

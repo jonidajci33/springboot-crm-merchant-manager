@@ -10,6 +10,6 @@ public interface TemplateFormService {
 
     void removeFieldFromTemplate(List<String> keys);
 
-    List<TemplateForm> getTemplateFields(Long userId, Long menuId);
+    List<TemplateForm> getTemplateFields(Long menuId);
 
 }

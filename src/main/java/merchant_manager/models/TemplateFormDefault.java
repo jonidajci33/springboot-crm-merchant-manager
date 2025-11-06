@@ -1,5 +1,6 @@
 package merchant_manager.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,7 @@ public class TemplateFormDefault extends BaseModel{
 
     @ManyToOne
     @JoinColumn(name = "template_id", nullable = false)
+    @JsonIgnore
     private Template template;
 
     @Column(name = "key", unique = true, nullable = false)
