@@ -30,7 +30,7 @@ public class DynamicRecordServiceImp implements DynamicRecordService {
         TemplateDefault template = templateServiceImp.findByMenuId(request.getMenuId());
         // 1. Get all column definitions for the template (for transformation only)
         List<TemplateFormDefault> columns = templateFormDefaultRepository
-                .findAllByTemplateId(template.getId());
+                .findByTemplateId(template.getId());
 
         // 2. Get all distinct record IDs for this template
         List<Long> allRecordIds = templateFormValueDefaultRepository

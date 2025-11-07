@@ -16,8 +16,8 @@ public interface TemplateFormDefaultRepository extends JpaRepository<TemplateFor
 
     Optional<TemplateFormDefault> findByKey(String key);
 
-    @Query("SELECT tfd FROM TemplateFormDefault tfd WHERE tfd.template.id = :templateId")
-    List<TemplateFormDefault> findAllByTemplateId(@Param("templateId") Long templateId);
+//    @Query("SELECT tfd FROM TemplateFormDefault tfd WHERE tfd.template.id = :templateId")
+//    List<TemplateFormDefault> findAllByTemplateId(@Param("templateId") Long templateId);
 
     Optional<TemplateFormDefault> removeByKey(String key);
 }

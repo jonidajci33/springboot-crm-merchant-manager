@@ -1,9 +1,13 @@
 package merchant_manager.service.implementation;
 
+import lombok.AllArgsConstructor;
 import merchant_manager.customExceptions.CustomExceptions;
 import merchant_manager.models.Menu;
 import merchant_manager.models.Template;
+import merchant_manager.models.TemplateDefault;
 import merchant_manager.models.User;
+import merchant_manager.models.enums.Role;
+import merchant_manager.repository.TemplateDefaultRepository;
 import merchant_manager.repository.TemplateRepository;
 import merchant_manager.service.TemplateService;
 import org.springframework.stereotype.Service;
@@ -14,22 +18,26 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class TemplateServiceImp implements TemplateService {
 
     private final TemplateRepository templateRepository;
     private final MenuSeviceImp menuSeviceImp;
-
-    public TemplateServiceImp(TemplateRepository templateRepository, MenuSeviceImp menuSeviceImp) {
-        this.templateRepository = templateRepository;
-        this.menuSeviceImp = menuSeviceImp;
-    }
+    private final TemplateDefaultRepository templateDefaultRepository;
 
     @Override
     public void addDefaultTemplateToUser(User user) {
         List<Menu> menus = menuSeviceImp.getMenus();
-        for (Menu menu : menus) {
-            Template template = new Template(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime(), ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime(), user.getUsername(), user.getUsername(), menu, user);
-            templateRepository.save(template);
+        if (user.getRole().equals(Role.ROLE_USER)) {
+            for (Menu menu : menus) {
+                Template template = new Template(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime(), ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime(), user.getUsername(), user.getUsername(), menu, user);
+                templateRepository.save(template);
+            }
+        } else {
+            for (Menu menu : menus) {
+                TemplateDefault template = new TemplateDefault(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime(), ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime(), user.getUsername(), user.getUsername(), menu, user);
+                templateDefaultRepository.save(template);
+            }
         }
     }
 

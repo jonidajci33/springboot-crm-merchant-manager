@@ -27,7 +27,7 @@ public class TemplateFormDefaultServiceImp implements TemplateFormDefaultService
     @Override
     public List<TemplateFormDefault> getColumnsByMenuId(Long menuId) {
         TemplateDefault template = templateServiceImp.findByMenuId(menuId);
-        return templateFormDefaultRepository.findAllByTemplateId(template.getId());
+        return templateFormDefaultRepository.findByTemplateId(template.getId());
     }
 
     @Override

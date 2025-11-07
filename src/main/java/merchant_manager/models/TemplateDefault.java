@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "template")
+@Table(name = "template_default")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
