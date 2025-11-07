@@ -24,4 +24,8 @@ public interface TemplateFormDefaultService {
     TemplateFormDefault getByKey(String key);
 
     List<TemplateFormDefault> addFieldToDefaultTemplate(Long menuId, List<TemplateFormDefault> templateForm);
+
+    void removeFieldFromTemplate(List<String> key);
+
+    TemplateFormDefault removeByKey(String key);
 }

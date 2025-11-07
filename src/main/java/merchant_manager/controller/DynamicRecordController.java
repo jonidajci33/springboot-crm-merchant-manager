@@ -52,7 +52,7 @@ public class DynamicRecordController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/template/{menuId}")
+    @GetMapping("/menu/{menuId}")
     @Operation(
             summary = "Query dynamic records by template ID (GET) - without columns",
             description = "Retrieves dynamic records for a template with pagination. Simple version without filters. " +
@@ -65,7 +65,7 @@ public class DynamicRecordController {
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "404", description = "Template not found")
     })
-    public ResponseEntity<DynamicRecordsSimplePageDTO> getDynamicRecordsByTemplateId(
+    public ResponseEntity<DynamicRecordsSimplePageDTO> getDynamicRecordsByMenuId(
             @Parameter(description = "Template ID", required = true)
             @PathVariable Long menuId,
             @Parameter(description = "Page number (0-based)", required = false)

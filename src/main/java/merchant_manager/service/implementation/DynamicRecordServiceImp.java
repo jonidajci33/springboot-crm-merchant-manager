@@ -3,6 +3,7 @@ package merchant_manager.service.implementation;
 import lombok.RequiredArgsConstructor;
 import merchant_manager.models.DTO.*;
 import merchant_manager.models.Template;
+import merchant_manager.models.TemplateDefault;
 import merchant_manager.models.TemplateFormDefault;
 import merchant_manager.models.TemplateFormValueDefault;
 import merchant_manager.repository.TemplateFormDefaultRepository;
@@ -19,13 +20,12 @@ public class DynamicRecordServiceImp implements DynamicRecordService {
 
     private final TemplateFormDefaultRepository templateFormDefaultRepository;
     private final TemplateFormValueDefaultRepository templateFormValueDefaultRepository;
-    private final TemplateServiceImp templateServiceImp;
+    private final TemplateDefaultServiceImp templateServiceImp;
     private final UserServiceImp userServiceImp;
 
     @Override
     public DynamicRecordsSimplePageDTO getDynamicRecordsSimple(DynamicRecordsRequestDTO request) {
-        Long userId = userServiceImp.getLoggedUser().getId();
-        Template template = templateServiceImp.findByUserIdAndMenuId(userId, request.getMenuId());
+        TemplateDefault template = templateServiceImp.findByMenuId(request.getMenuId());
         // 1. Get all column definitions for the template (for transformation only)
         List<TemplateFormDefault> columns = templateFormDefaultRepository
                 .findAllByTemplateId(template.getId());
