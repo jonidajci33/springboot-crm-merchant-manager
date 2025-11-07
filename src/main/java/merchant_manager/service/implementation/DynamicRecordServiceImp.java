@@ -9,6 +9,8 @@ import merchant_manager.models.TemplateFormValueDefault;
 import merchant_manager.repository.TemplateFormDefaultRepository;
 import merchant_manager.repository.TemplateFormValueDefaultRepository;
 import merchant_manager.service.DynamicRecordService;
+import merchant_manager.util.TemplateFormValueDefaultSpecification;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -84,75 +86,41 @@ public class DynamicRecordServiceImp implements DynamicRecordService {
     }
 
     /**
-     * Filter record IDs by a specific field condition
+     * Filter record IDs by a specific field condition using database query
      */
     private List<Long> filterByField(List<Long> recordIds, RecordFilterDTO filter, Long templateId) {
         if (recordIds.isEmpty()) {
             return recordIds;
         }
 
-        // Get all values for this field and the given record IDs
-        List<TemplateFormValueDefault> values = templateFormValueDefaultRepository
-                .findByTemplateIdAndRecordIds(templateId, recordIds);
+        // Use Specification to build database query with filtering
+        Specification<TemplateFormValueDefault> spec = TemplateFormValueDefaultSpecification
+                .filterByFieldAndValue(filter.getFieldKey(), filter, recordIds);
 
-        // Filter by field key
-        return values.stream()
-                .filter(v -> v.getTemplateFormDefault().getKey().equals(filter.getFieldKey()))
-                .filter(v -> matchesFilter(v.getValue(), filter))
+        // Execute query and get matching record IDs
+        return templateFormValueDefaultRepository.findAll(spec).stream()
                 .map(TemplateFormValueDefault::getRecordId)
                 .distinct()
                 .collect(Collectors.toList());
     }
 
     /**
-     * Check if a value matches the filter condition
-     */
-    private boolean matchesFilter(String value, RecordFilterDTO filter) {
-        if (value == null || filter.getValue() == null) {
-            return false;
-        }
-
-        String lowerValue = value.toLowerCase();
-        String lowerFilterValue = filter.getValue().toLowerCase();
-
-        return switch (filter.getOperator().toUpperCase()) {
-            case "EQUALS" -> lowerValue.equals(lowerFilterValue);
-            case "CONTAINS" -> lowerValue.contains(lowerFilterValue);
-            case "STARTS_WITH" -> lowerValue.startsWith(lowerFilterValue);
-            case "ENDS_WITH" -> lowerValue.endsWith(lowerFilterValue);
-            case "GREATER_THAN" -> {
-                try {
-                    yield Double.parseDouble(value) > Double.parseDouble(filter.getValue());
-                } catch (NumberFormatException e) {
-                    yield false;
-                }
-            }
-            case "LESS_THAN" -> {
-                try {
-                    yield Double.parseDouble(value) < Double.parseDouble(filter.getValue());
-                } catch (NumberFormatException e) {
-                    yield false;
-                }
-            }
-            default -> true;
-        };
-    }
-
-    /**
-     * Apply sorting to record IDs
+     * Apply sorting to record IDs using database query
      */
     private List<Long> applySorting(List<Long> recordIds, String sortBy, String sortDirection, Long templateId) {
         if (sortBy == null || sortBy.isEmpty() || recordIds.isEmpty()) {
             return recordIds;
         }
 
-        // Get all values for the sort field
-        List<TemplateFormValueDefault> values = templateFormValueDefaultRepository
-                .findByTemplateIdAndRecordIds(templateId, recordIds);
+        // Use Specification to get sort values from database
+        Specification<TemplateFormValueDefault> spec = TemplateFormValueDefaultSpecification
+                .filterForSorting(sortBy, recordIds);
+
+        // Execute query and get values for sorting
+        List<TemplateFormValueDefault> values = templateFormValueDefaultRepository.findAll(spec);
 
         // Create a map of recordId -> value for the sort field
         Map<Long, String> sortValues = values.stream()
-                .filter(v -> v.getTemplateFormDefault().getKey().equals(sortBy))
                 .collect(Collectors.toMap(
                         TemplateFormValueDefault::getRecordId,
                         TemplateFormValueDefault::getValue,
