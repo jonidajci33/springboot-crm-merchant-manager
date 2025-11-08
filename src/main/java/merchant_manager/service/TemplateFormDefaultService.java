@@ -27,5 +27,5 @@ public interface TemplateFormDefaultService {
 
     void removeFieldFromTemplate(List<String> key);
 
-    TemplateFormDefault removeByKey(String key);
+    void removeByKey(String key);
 }

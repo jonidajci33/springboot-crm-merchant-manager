@@ -90,7 +90,7 @@ public class TemplateFormDefaultServiceImp implements TemplateFormDefaultService
         }
     }
 
-    public TemplateFormDefault removeByKey(String key) {
-        return templateFormDefaultRepository.removeByKey(key).orElseThrow(() -> new CustomExceptions.ResourceNotFoundException("Key not found"));
+    public void removeByKey(String key) {
+        templateFormDefaultRepository.deleteByKey(key);
     }
 }

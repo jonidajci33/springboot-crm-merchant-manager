@@ -93,4 +93,26 @@ public class TemplateFormDefaultController {
         List<TemplateFormDefault> savedForms = templateFormDefaultService.addFieldToDefaultTemplate(menuId, templateFormDefaults);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedForms);
     }
+
+    @DeleteMapping("/remove")
+    @Operation(
+            summary = "Remove fields from default template",
+            description = "Removes column definitions from a default template by their keys. " +
+                         "This operation is restricted to SUPERUSER role only. " +
+                         "The fields will be permanently deleted from the default template structure."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Fields successfully removed from default template"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data or validation failed"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - User is not a SUPERUSER"),
+            @ApiResponse(responseCode = "404", description = "One or more fields not found with the provided keys")
+    })
+    public ResponseEntity<Void> removeFieldFromTemplate(
+            @Parameter(description = "List of column keys to remove from the default template", required = true)
+            @RequestBody List<String> keys
+    ) {
+        templateFormDefaultService.removeFieldFromTemplate(keys);
+        return ResponseEntity.noContent().build();
+    }
 }
