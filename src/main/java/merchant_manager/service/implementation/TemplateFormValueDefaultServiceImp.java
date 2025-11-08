@@ -103,11 +103,21 @@ public class TemplateFormValueDefaultServiceImp implements TemplateFormValueDefa
 
     @Override
     public TemplateFormValueDefault findByTemplateFormIdAndRecordId(Long templateFormId, Long recordId) {
-        return templateFormValueDefaultRepository.findByTemplateFormDefaultIdAndRecordId(templateFormId, recordId);
+        TemplateFormValueDefault templateFormValueDefault = templateFormValueDefaultRepository.findByTemplateFormDefaultIdAndRecordId(templateFormId, recordId);
+        if(templateFormValueDefault != null){
+            return templateFormValueDefault;
+        }else {
+            throw new CustomExceptions.ResourceNotFoundException("Template form id not found: " + templateFormId + "and record id not found: " + recordId);
+        }
     }
 
     @Override
     public TemplateFormValueDefault save(TemplateFormValueDefault templateFormValue) {
         return templateFormValueDefaultRepository.save(templateFormValue);
+    }
+
+    @Override
+    public List<TemplateFormValueDefault> findByMenuIdAndRecordId(Long menuId, Long recordId) {
+        return templateFormValueDefaultRepository.findByMenuIdAndRecordId(menuId, recordId);
     }
 }

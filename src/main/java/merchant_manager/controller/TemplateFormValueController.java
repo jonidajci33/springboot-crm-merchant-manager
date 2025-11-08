@@ -42,7 +42,7 @@ public class TemplateFormValueController {
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "404", description = "Template form not found")
     })
-    public ResponseEntity<Void> addValueToForm(
+    public ResponseEntity<Long> addValueToForm(
             @Parameter(description = "Menu ID for the template form", required = true)
             @RequestParam Long menuId,
             @Parameter(description = "Record ID (optional)", required = false)
@@ -50,8 +50,27 @@ public class TemplateFormValueController {
             @Parameter(description = "List of values to add to the form", required = true)
             @Valid @RequestBody List<AddValueRequest> addValueRequests
     ) {
-        templateFormValueServiceImp.addValuesToForm(menuId, recordId, addValueRequests);
-        return ResponseEntity.noContent().build();
+        Long id = templateFormValueServiceImp.addValuesToForm(menuId, recordId, addValueRequests);
+        return ResponseEntity.ok(id);
+    }
+
+    @GetMapping("/by-menu-and-record")
+    @Operation(
+            summary = "Get form values by menu ID and record ID",
+            description = "Retrieves all form values for a specific menu and record combination"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved form values"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "404", description = "No values found")
+    })
+    public ResponseEntity<?> getValuesByMenuIdAndRecordId(
+            @Parameter(description = "Menu ID", required = true)
+            @RequestParam Long menuId,
+            @Parameter(description = "Record ID", required = true)
+            @RequestParam Long recordId
+    ) {
+        return ResponseEntity.ok(templateFormValueServiceImp.findByMenuIdAndRecordId(menuId, recordId));
     }
 }
 

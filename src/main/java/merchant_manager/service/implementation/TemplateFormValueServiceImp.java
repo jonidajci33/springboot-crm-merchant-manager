@@ -1,5 +1,6 @@
 package merchant_manager.service.implementation;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import merchant_manager.customExceptions.CustomExceptions;
 import merchant_manager.models.*;
@@ -15,28 +16,22 @@ import java.util.List;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class TemplateFormValueServiceImp implements TemplateFormValueService {
 
     private final TemplateValueFormRepository templateValueFormRepository;
     private final TemplateFormServiceImp templateFormServiceImp;
+    private final TemplateFormDefaultServiceImp templateFormDefaultServiceImp;
+    private final TemplateFormValueDefaultServiceImp templateFormValueDefaultServiceImp;
     private final LeadServiceImp leadServiceImp;
     private final UserServiceImp userServiceImp;
     private final ContactServiceImp contactServiceImp;
     private final MerchantServiceImp merchantServiceImp;
 
-    public TemplateFormValueServiceImp(TemplateValueFormRepository templateValueFormRepository, TemplateFormServiceImp templateFormServiceImp, LeadServiceImp leadServiceImp, UserServiceImp userServiceImp, ContactServiceImp contactServiceImp, MerchantServiceImp merchantServiceImp) {
-        this.templateValueFormRepository = templateValueFormRepository;
-        this.templateFormServiceImp = templateFormServiceImp;
-        this.leadServiceImp = leadServiceImp;
-        this.userServiceImp = userServiceImp;
-        this.contactServiceImp = contactServiceImp;
-        this.merchantServiceImp = merchantServiceImp;
-    }
-
-    public void addValuesToForm(Long menuId, Long recordId, List<AddValueRequest> addValueRequests){
+    public Long addValuesToForm(Long menuId, Long recordId, List<AddValueRequest> addValueRequests){
         try {
+            Long currentRecordId = recordId;
             if (recordId == null) {
-                Long currentRecordId = null;
                 switch ((int) menuId.longValue()) {
                     case 4:
                         Lead lead = new Lead();
@@ -68,26 +63,31 @@ public class TemplateFormValueServiceImp implements TemplateFormValueService {
                         currentRecordId = merchant.getId();
                         break;
                 }
-                for (AddValueRequest addValueRequest : addValueRequests) {
-                    TemplateFormValue templateFormValue = new TemplateFormValue();
-                    templateFormValue.setTemplateForm(templateFormServiceImp.findByKey(addValueRequest.getKey()));
+            }
+            for (AddValueRequest addValueRequest : addValueRequests) {
+                if(addValueRequest.getIsDefault()){
+                    TemplateFormValueDefault templateFormValue;
+                    try {
+                        templateFormValue = templateFormValueDefaultServiceImp.findByTemplateFormIdAndRecordId(templateFormDefaultServiceImp.getByKey(addValueRequest.getKey()).getId(), recordId);
+                    } catch (CustomExceptions.ResourceNotFoundException e) {
+                        templateFormValue = new TemplateFormValueDefault();
+                        templateFormValue.setTemplateFormDefault(templateFormDefaultServiceImp.getByKey(addValueRequest.getKey()));
+                        templateFormValue.setRecordId(currentRecordId);
+                        templateFormValue.setCreatedBy(userServiceImp.getLoggedUser().getUsername());
+                        templateFormValue.setCreatedAt(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime());
+                    }
                     templateFormValue.setValue(addValueRequest.getValue());
-                    templateFormValue.setRecordId(currentRecordId);
-                    templateFormValue.setCreatedAt(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime());
                     templateFormValue.setUpdatedAt(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime());
-                    templateFormValue.setCreatedBy(userServiceImp.getLoggedUser().getUsername());
                     templateFormValue.setLastUpdatedBy(userServiceImp.getLoggedUser().getUsername());
-                    save(templateFormValue);
-                }
-            } else {
-                for (AddValueRequest addValueRequest : addValueRequests) {
+                    templateFormValueDefaultServiceImp.save(templateFormValue);
+                }else {
                     TemplateFormValue templateFormValue;
                     try {
                         templateFormValue = findByTemplateFormIdAndRecordId(templateFormServiceImp.findByKey(addValueRequest.getKey()).getId(), recordId);
                     } catch (CustomExceptions.ResourceNotFoundException e) {
                         templateFormValue = new TemplateFormValue();
                         templateFormValue.setTemplateForm(templateFormServiceImp.findByKey(addValueRequest.getKey()));
-                        templateFormValue.setRecordId(recordId);
+                        templateFormValue.setRecordId(currentRecordId);
                         templateFormValue.setCreatedBy(userServiceImp.getLoggedUser().getUsername());
                         templateFormValue.setCreatedAt(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime());
                     }
@@ -97,6 +97,7 @@ public class TemplateFormValueServiceImp implements TemplateFormValueService {
                     save(templateFormValue);
                 }
             }
+            return currentRecordId;
         } catch (CustomExceptions.ResourceNotFoundException e) {
             throw e;
         } catch (Exception e) {
@@ -116,6 +117,10 @@ public class TemplateFormValueServiceImp implements TemplateFormValueService {
 
     public TemplateFormValue save(TemplateFormValue templateFormValue) {
         return templateValueFormRepository.save(templateFormValue);
+    }
+
+    public List<TemplateFormValue> findByMenuIdAndRecordId(Long menuId, Long recordId) {
+        return templateValueFormRepository.findByMenuIdAndRecordId(menuId, recordId);
     }
 
 }

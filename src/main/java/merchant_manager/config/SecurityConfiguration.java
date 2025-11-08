@@ -44,8 +44,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(WHITE_LIST_URL)
                                 .permitAll()
-                                .requestMatchers("/user/secure/**", "/api/**").hasAnyAuthority(ROLE_SUPERUSER.name())
-                                .requestMatchers("/api/**").hasAnyAuthority(ROLE_USER.name())
+                                .requestMatchers("/user/secure/**").hasAnyAuthority(ROLE_SUPERUSER.name())
+                                .requestMatchers("/api/**").hasAnyAuthority(ROLE_USER.name(), ROLE_SUPERUSER.name())
                                 .anyRequest()
                                 .authenticated()
                 )

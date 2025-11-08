@@ -95,7 +95,7 @@ public class UserServiceImp implements UserService {
             user.setLastName(request.getLastname());
             user.setEmail(request.getEmail());
             user.setPhone(request.getPhone());
-            user.setRole(Role.ROLE_SUPERUSER);
+            user.setRole(Role.ROLE_USER);
             return save(user);
         }
         throw new CustomExceptions.CustomValidationException("Username already exists");

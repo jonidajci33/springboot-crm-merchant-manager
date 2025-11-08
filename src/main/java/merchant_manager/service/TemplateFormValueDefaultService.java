@@ -13,4 +13,6 @@ public interface TemplateFormValueDefaultService {
     TemplateFormValueDefault findByTemplateFormIdAndRecordId(Long templateFormId, Long recordId);
 
     TemplateFormValueDefault save(TemplateFormValueDefault templateFormValue);
+
+    List<TemplateFormValueDefault> findByMenuIdAndRecordId(Long menuId, Long recordId);
 }
