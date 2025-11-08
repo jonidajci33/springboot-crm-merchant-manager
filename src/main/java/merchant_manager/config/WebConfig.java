@@ -10,9 +10,14 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://aegisbroker.com", "https://api.aegisbroker.com")  // Allows requests from all origins (IPs, domains, etc.)
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedOrigins(
+                        "https://aegisbroker.com",
+                        "https://api.aegisbroker.com",
+                        "http://localhost:3000",  // React dev server
+                        "http://localhost:3001"   // Alternative port
+                )
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                 .allowedHeaders("*")
-                .allowCredentials(false);  // If you don't need credentials, set this to false
+                .allowCredentials(true);  // Set to true to allow credentials (cookies, authorization headers)
     }
 }
