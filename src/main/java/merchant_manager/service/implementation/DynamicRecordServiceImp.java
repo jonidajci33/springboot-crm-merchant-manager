@@ -34,7 +34,7 @@ public class DynamicRecordServiceImp implements DynamicRecordService {
 
         // 2. Get all distinct record IDs for this template
         List<Long> allRecordIds = templateFormValueDefaultRepository
-                .findDistinctRecordIdsByTemplateId(template.getId());
+                .findDistinctRecordIdsByTemplateId(template.getId(), userServiceImp.getLoggedUser());
 
         // 3. Apply filtering
         List<Long> filteredRecordIds = applyFilters(allRecordIds, request.getFilters(), template.getId());

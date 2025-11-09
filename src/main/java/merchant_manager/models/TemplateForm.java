@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import merchant_manager.models.enums.FieldType;
 import org.hibernate.annotations.Type;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -40,7 +41,7 @@ public class TemplateForm extends BaseModel{
 
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
-    private Map<String, String> options;
+    private List<Map<String, String>> options;
 
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")

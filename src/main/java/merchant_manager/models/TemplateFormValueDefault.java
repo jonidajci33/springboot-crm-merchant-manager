@@ -27,4 +27,7 @@ public class TemplateFormValueDefault extends BaseModel{
     @Column(name = "value")
     private String value;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)  // foreign key column in template table
+    private User user;
 }

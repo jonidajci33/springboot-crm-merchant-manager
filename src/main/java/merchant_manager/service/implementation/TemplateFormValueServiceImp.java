@@ -73,6 +73,7 @@ public class TemplateFormValueServiceImp implements TemplateFormValueService {
                         templateFormValue = new TemplateFormValueDefault();
                         templateFormValue.setTemplateFormDefault(templateFormDefaultServiceImp.getByKey(addValueRequest.getKey()));
                         templateFormValue.setRecordId(currentRecordId);
+                        templateFormValue.setUser(userServiceImp.getLoggedUser());
                         templateFormValue.setCreatedBy(userServiceImp.getLoggedUser().getUsername());
                         templateFormValue.setCreatedAt(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime());
                     }

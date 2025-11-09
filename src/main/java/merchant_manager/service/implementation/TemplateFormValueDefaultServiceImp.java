@@ -81,6 +81,7 @@ public class TemplateFormValueDefaultServiceImp implements TemplateFormValueDefa
                         templateFormValue = findByTemplateFormIdAndRecordId(templateFormDefaultServiceImp.getByKey(addValueRequest.getKey()).getId(), recordId);
                     } catch (CustomExceptions.ResourceNotFoundException e) {
                         templateFormValue = new TemplateFormValueDefault();
+                        templateFormValue.setUser(userServiceImp.getLoggedUser());
                         templateFormValue.setTemplateFormDefault(templateFormDefaultServiceImp.getByKey(addValueRequest.getKey()));
                         templateFormValue.setRecordId(recordId);
                         templateFormValue.setCreatedBy(userServiceImp.getLoggedUser().getUsername());

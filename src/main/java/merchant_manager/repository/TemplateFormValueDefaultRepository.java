@@ -1,6 +1,7 @@
 package merchant_manager.repository;
 
 import merchant_manager.models.TemplateFormValueDefault;
+import merchant_manager.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -17,8 +18,9 @@ public interface TemplateFormValueDefaultRepository extends JpaRepository<Templa
 
     @Query("SELECT DISTINCT tfvd.recordId FROM TemplateFormValueDefault tfvd " +
            "WHERE tfvd.templateFormDefault.template.id = :templateId " +
+            "AND tfvd.user = :user " +
            "ORDER BY tfvd.recordId DESC")
-    List<Long> findDistinctRecordIdsByTemplateId(@Param("templateId") Long templateId);
+    List<Long> findDistinctRecordIdsByTemplateId(@Param("templateId") Long templateId, @Param("user") User user);
 
     @Query("SELECT tfvd FROM TemplateFormValueDefault tfvd " +
            "WHERE tfvd.templateFormDefault.template.id = :templateId " +
