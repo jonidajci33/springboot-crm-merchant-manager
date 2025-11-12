@@ -124,4 +124,7 @@ public class TemplateFormValueServiceImp implements TemplateFormValueService {
         return templateValueFormRepository.findByMenuIdAndRecordId(menuId, recordId);
     }
 
+    public void deleteByMenuIdAndRecordId(Long menuId, Long recordId) {
+        templateValueFormRepository.deleteByMenuIdAndRecordI(menuId, recordId);
+    }
 }

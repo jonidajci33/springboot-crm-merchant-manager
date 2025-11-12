@@ -5,4 +5,6 @@ import merchant_manager.models.Contact;
 public interface ContactService {
 
     Contact save(Contact contact);
+
+    void deleteContact(Long id);
 }

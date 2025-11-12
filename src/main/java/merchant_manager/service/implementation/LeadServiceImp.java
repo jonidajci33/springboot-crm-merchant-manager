@@ -16,4 +16,8 @@ public class LeadServiceImp {
     public Lead saveLead(Lead lead) {
         return leadRepository.save(lead);
     }
+
+    public void deleteLead(Long id) {
+        leadRepository.deleteById(id);
+    }
 }

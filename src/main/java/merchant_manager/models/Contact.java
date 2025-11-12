@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Table(name = "contact")
 @Data
@@ -17,4 +19,6 @@ public class Contact extends BaseModel{
     @Column(name = "id")
     private Long id;
 
+    @OneToMany(mappedBy = "contact", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ContactMerchant> contactMerchants;
 }

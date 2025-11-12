@@ -6,22 +6,22 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "contact_merchant")
+@Table(name = "merchant_miles")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ContactMerchant {
+public class MerchantMiles {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "contact_id")
-    private Contact contact;
-
-    @ManyToOne
-    @JoinColumn(name = "merchant_id")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "merchant_id", referencedColumnName = "id")
     private Merchant merchant;
+
+    @Column(name = "points")
+    private Long points;
+
 }

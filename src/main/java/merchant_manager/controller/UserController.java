@@ -28,4 +28,9 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    @GetMapping("/getLoggedUser")
+    public ResponseEntity<User> getLoggedUser() {
+        return ResponseEntity.ok(userServiceImp.getLoggedUser());
+    }
+
 }

@@ -4,9 +4,11 @@ import merchant_manager.models.TemplateFormValueDefault;
 import merchant_manager.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -37,4 +39,21 @@ public interface TemplateFormValueDefaultRepository extends JpaRepository<Templa
     List<TemplateFormValueDefault> findByMenuIdAndRecordId(
             @Param("menuId") Long menuId,
             @Param("recordId") Long recordId);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM TemplateFormValueDefault tfvd " +
+           "WHERE tfvd.templateFormDefault.template.menu.id = :menuId " +
+           "AND tfvd.recordId = :recordId")
+    void deleteByMenuIdAndRecordId(@Param("menuId") Long menuId, @Param("recordId") Long recordId);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM TemplateFormValueDefault tfvd " +
+           "WHERE tfvd.templateFormDefault.template.menu.id = :menuId " +
+           "AND tfvd.recordId = :recordId " +
+           "AND tfvd.user = :user")
+    void deleteByMenuIdAndRecordIdAndUser(@Param("menuId") Long menuId,
+                                          @Param("recordId") Long recordId,
+                                          @Param("user") User user);
 }

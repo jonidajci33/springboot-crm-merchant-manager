@@ -6,4 +6,6 @@ public interface MerchantService {
 
     Merchant save(Merchant merchant);
 
+    void deleteMerchant(Long id);
+
 }

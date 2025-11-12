@@ -15,4 +15,6 @@ public interface TemplateFormValueDefaultService {
     TemplateFormValueDefault save(TemplateFormValueDefault templateFormValue);
 
     List<TemplateFormValueDefault> findByMenuIdAndRecordId(Long menuId, Long recordId);
+
+    void deleteRecord(Long menuId, Long recordId);
 }
