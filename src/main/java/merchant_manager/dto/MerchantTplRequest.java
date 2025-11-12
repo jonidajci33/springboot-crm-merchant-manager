@@ -2,8 +2,10 @@ package merchant_manager.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
-public class ContactMerchantRequest {
-    private Long contactId;
+public class MerchantTplRequest {
     private Long merchantId;
+    private List<String> tpls;
 }

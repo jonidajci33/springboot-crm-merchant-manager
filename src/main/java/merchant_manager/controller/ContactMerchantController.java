@@ -19,11 +19,8 @@ public class ContactMerchantController {
     }
 
     @PostMapping
-    public ResponseEntity<ContactMerchant> createContactMerchant(@RequestBody ContactMerchantRequest request) {
-        ContactMerchant saved = contactMerchantService.createContactMerchant(
-                request.getLeadId(),
-                request.getMerchantId()
-        );
+    public ResponseEntity<List<ContactMerchant>> createContactMerchant(@RequestBody List<ContactMerchantRequest> request) {
+        List<ContactMerchant> saved = contactMerchantService.createContactMerchant(request);
         return ResponseEntity.ok(saved);
     }
 

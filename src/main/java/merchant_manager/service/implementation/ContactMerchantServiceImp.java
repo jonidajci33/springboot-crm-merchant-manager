@@ -2,6 +2,7 @@ package merchant_manager.service.implementation;
 
 import lombok.AllArgsConstructor;
 import merchant_manager.customExceptions.CustomExceptions;
+import merchant_manager.dto.ContactMerchantRequest;
 import merchant_manager.models.Contact;
 import merchant_manager.models.ContactMerchant;
 import merchant_manager.models.Lead;
@@ -13,6 +14,7 @@ import merchant_manager.repository.MerchantRepository;
 import merchant_manager.service.ContactMerchantService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,17 +32,24 @@ public class ContactMerchantServiceImp implements ContactMerchantService {
     }
 
     @Override
-    public ContactMerchant createContactMerchant(Long contactId, Long merchantId) {
-        Contact contact = contactRepository.findById(contactId)
-                .orElseThrow(() -> new RuntimeException("Contact not found with id: " + contactId));
-        Merchant merchant = merchantRepository.findById(merchantId)
-                .orElseThrow(() -> new RuntimeException("Merchant not found with id: " + merchantId));
+    public List<ContactMerchant> createContactMerchant(List<ContactMerchantRequest> requests) {
 
-        ContactMerchant contactMerchant = new ContactMerchant();
-        contactMerchant.setContact(contact);
-        contactMerchant.setMerchant(merchant);
+        List<ContactMerchant> contactMerchants = new ArrayList<>();
 
-        return contactMerchantRepository.save(contactMerchant);
+        for (ContactMerchantRequest contactMerchantRequest : requests) {
+            Contact contact = contactRepository.findById(contactMerchantRequest.getContactId())
+                    .orElseThrow(() -> new RuntimeException("Contact not found with id: " + contactMerchantRequest.getContactId()));
+            Merchant merchant = merchantRepository.findById(contactMerchantRequest.getMerchantId())
+                    .orElseThrow(() -> new RuntimeException("Merchant not found with id: " + contactMerchantRequest.getMerchantId()));
+
+            ContactMerchant contactMerchant = new ContactMerchant();
+            contactMerchant.setContact(contact);
+            contactMerchant.setMerchant(merchant);
+            contactMerchants.add(contactMerchant);
+        }
+
+
+        return contactMerchantRepository.saveAll(contactMerchants);
     }
 
     @Override

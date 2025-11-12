@@ -24,4 +24,7 @@ public class Merchant extends BaseModel{
     @OneToMany(mappedBy = "merchant", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ContactMerchant> contactMerchants;
 
+    @OneToMany(mappedBy = "merchant", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<MerchantTpl> merchantTpls;
+
 }
