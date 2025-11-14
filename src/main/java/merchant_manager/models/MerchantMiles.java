@@ -28,4 +28,8 @@ public class MerchantMiles {
     @JoinColumn(name = "pointing_system_id", referencedColumnName = "id")
     private PointingSystem pointingSystem;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
 }

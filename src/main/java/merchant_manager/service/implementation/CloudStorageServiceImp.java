@@ -1,0 +1,293 @@
+package merchant_manager.service.implementation;
+
+import merchant_manager.config.CloudStorageProperties;
+import merchant_manager.dto.FileUploadResponse;
+import merchant_manager.models.FileMetadata;
+import merchant_manager.models.User;
+import merchant_manager.repository.FileMetadataRepository;
+import merchant_manager.service.CloudStorageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class CloudStorageServiceImp implements CloudStorageService {
+
+    private static final Logger logger = LoggerFactory.getLogger(CloudStorageServiceImp.class);
+
+    private final FileMetadataRepository fileMetadataRepository;
+    private final CloudStorageProperties storageProperties;
+    private final SupabaseStorageService supabaseStorageService;
+
+    public CloudStorageServiceImp(FileMetadataRepository fileMetadataRepository,
+                                  CloudStorageProperties storageProperties,
+                                  SupabaseStorageService supabaseStorageService) {
+        this.fileMetadataRepository = fileMetadataRepository;
+        this.storageProperties = storageProperties;
+        this.supabaseStorageService = supabaseStorageService;
+        initializeStorage();
+    }
+
+    private void initializeStorage() {
+        if ("local".equalsIgnoreCase(storageProperties.getProvider())) {
+            try {
+                String storagePath = storageProperties.getLocalStoragePath();
+                if (storagePath == null || storagePath.isEmpty()) {
+                    storagePath = "uploads";
+                    storageProperties.setLocalStoragePath(storagePath);
+                }
+                Path uploadPath = Paths.get(storagePath);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                    logger.info("Created local storage directory: {}", uploadPath.toAbsolutePath());
+                }
+            } catch (IOException e) {
+                logger.error("Failed to create storage directory", e);
+                throw new RuntimeException("Could not initialize storage", e);
+            }
+        }
+    }
+
+    @Override
+    public FileUploadResponse uploadFile(MultipartFile file, String entityType, Long entityId, Boolean isPublic) {
+        // Validate file
+        if (file.isEmpty()) {
+            throw new RuntimeException("Cannot upload empty file");
+        }
+
+        if (file.getSize() > storageProperties.getMaxFileSize()) {
+            throw new RuntimeException("File size exceeds maximum allowed size");
+        }
+
+        // Get current user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = authentication != null ? (User) authentication.getPrincipal() : null;
+
+        try {
+            // Generate unique filename
+            String originalFilename = file.getOriginalFilename();
+            String extension = originalFilename != null && originalFilename.contains(".")
+                    ? originalFilename.substring(originalFilename.lastIndexOf("."))
+                    : "";
+            String storedFilename = generateUniqueFilename(extension);
+
+            String fileUrl;
+            String filePath;
+
+            // Upload based on provider
+            if ("supabase".equalsIgnoreCase(storageProperties.getProvider())) {
+                fileUrl = supabaseStorageService.uploadFile(file, storedFilename);
+                filePath = storageProperties.getBucketName() + "/" + storedFilename;
+            } else if ("aws".equalsIgnoreCase(storageProperties.getProvider())) {
+                fileUrl = uploadToAWS(file, storedFilename);
+                filePath = storageProperties.getBucketName() + "/" + storedFilename;
+            } else if ("azure".equalsIgnoreCase(storageProperties.getProvider())) {
+                fileUrl = uploadToAzure(file, storedFilename);
+                filePath = storageProperties.getBucketName() + "/" + storedFilename;
+            } else if ("gcp".equalsIgnoreCase(storageProperties.getProvider())) {
+                fileUrl = uploadToGCP(file, storedFilename);
+                filePath = storageProperties.getBucketName() + "/" + storedFilename;
+            } else {
+                // Default to local storage
+                filePath = uploadToLocal(file, storedFilename);
+                fileUrl = "/api/files/download/" + storedFilename;
+            }
+
+            // Save metadata to database
+            FileMetadata metadata = new FileMetadata();
+            metadata.setOriginalFilename(originalFilename);
+            metadata.setStoredFilename(storedFilename);
+            metadata.setFilePath(filePath);
+            metadata.setFileSize(file.getSize());
+            metadata.setContentType(file.getContentType());
+            metadata.setCloudProvider(storageProperties.getProvider());
+            metadata.setBucketName(storageProperties.getBucketName());
+            metadata.setFileUrl(fileUrl);
+            metadata.setUploadedBy(currentUser);
+            metadata.setIsPublic(isPublic != null ? isPublic : false);
+            metadata.setEntityType(entityType);
+            metadata.setEntityId(entityId);
+
+            FileMetadata savedMetadata = fileMetadataRepository.save(metadata);
+
+            logger.info("File uploaded successfully: {} (ID: {})", originalFilename, savedMetadata.getId());
+
+            return new FileUploadResponse(
+                    savedMetadata.getId(),
+                    originalFilename,
+                    storedFilename,
+                    fileUrl,
+                    file.getSize(),
+                    file.getContentType(),
+                    "File uploaded successfully",
+                    "success"
+            );
+
+        } catch (Exception e) {
+            logger.error("Error uploading file", e);
+            throw new RuntimeException("Failed to upload file: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public InputStream downloadFile(Long fileId) {
+        FileMetadata metadata = getFileMetadata(fileId);
+
+        try {
+            if ("supabase".equalsIgnoreCase(metadata.getCloudProvider())) {
+                return supabaseStorageService.downloadFile(metadata.getStoredFilename());
+            } else if ("aws".equalsIgnoreCase(metadata.getCloudProvider())) {
+                return downloadFromAWS(metadata.getStoredFilename());
+            } else if ("azure".equalsIgnoreCase(metadata.getCloudProvider())) {
+                return downloadFromAzure(metadata.getStoredFilename());
+            } else if ("gcp".equalsIgnoreCase(metadata.getCloudProvider())) {
+                return downloadFromGCP(metadata.getStoredFilename());
+            } else {
+                return downloadFromLocal(metadata.getStoredFilename());
+            }
+        } catch (Exception e) {
+            logger.error("Error downloading file: {}", fileId, e);
+            throw new RuntimeException("Failed to download file", e);
+        }
+    }
+
+    @Override
+    public void deleteFile(Long fileId) {
+        FileMetadata metadata = getFileMetadata(fileId);
+
+        try {
+            if ("supabase".equalsIgnoreCase(metadata.getCloudProvider())) {
+                supabaseStorageService.deleteFile(metadata.getStoredFilename());
+            } else if ("aws".equalsIgnoreCase(metadata.getCloudProvider())) {
+                deleteFromAWS(metadata.getStoredFilename());
+            } else if ("azure".equalsIgnoreCase(metadata.getCloudProvider())) {
+                deleteFromAzure(metadata.getStoredFilename());
+            } else if ("gcp".equalsIgnoreCase(metadata.getCloudProvider())) {
+                deleteFromGCP(metadata.getStoredFilename());
+            } else {
+                deleteFromLocal(metadata.getStoredFilename());
+            }
+
+            fileMetadataRepository.deleteById(fileId);
+            logger.info("File deleted successfully: {}", fileId);
+
+        } catch (Exception e) {
+            logger.error("Error deleting file: {}", fileId, e);
+            throw new RuntimeException("Failed to delete file", e);
+        }
+    }
+
+    @Override
+    public FileMetadata getFileMetadata(Long fileId) {
+        return fileMetadataRepository.findById(fileId)
+                .orElseThrow(() -> new RuntimeException("File not found with id: " + fileId));
+    }
+
+    @Override
+    public List<FileMetadata> getFilesByUser(Long userId) {
+        return fileMetadataRepository.findByUploadedById(userId);
+    }
+
+    @Override
+    public List<FileMetadata> getFilesByEntity(String entityType, Long entityId) {
+        return fileMetadataRepository.findByEntityTypeAndEntityId(entityType, entityId);
+    }
+
+    @Override
+    public String getFileUrl(Long fileId) {
+        FileMetadata metadata = getFileMetadata(fileId);
+        return metadata.getFileUrl();
+    }
+
+    // Helper methods
+
+    private String generateUniqueFilename(String extension) {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        String uuid = UUID.randomUUID().toString().substring(0, 8);
+        return timestamp + "_" + uuid + extension;
+    }
+
+    // Local storage methods
+
+    private String uploadToLocal(MultipartFile file, String filename) throws IOException {
+        Path uploadPath = Paths.get(storageProperties.getLocalStoragePath());
+        Path filePath = uploadPath.resolve(filename);
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        return filePath.toString();
+    }
+
+    private InputStream downloadFromLocal(String filename) throws IOException {
+        Path filePath = Paths.get(storageProperties.getLocalStoragePath()).resolve(filename);
+        return Files.newInputStream(filePath);
+    }
+
+    private void deleteFromLocal(String filename) throws IOException {
+        Path filePath = Paths.get(storageProperties.getLocalStoragePath()).resolve(filename);
+        Files.deleteIfExists(filePath);
+    }
+
+    // AWS S3 methods (placeholders - implement with AWS SDK)
+
+    private String uploadToAWS(MultipartFile file, String filename) {
+        // TODO: Implement AWS S3 upload using AWS SDK
+        // Example: s3Client.putObject(bucketName, filename, file.getInputStream(), metadata)
+        throw new UnsupportedOperationException("AWS S3 upload not yet implemented. Please add AWS SDK dependency and implement.");
+    }
+
+    private InputStream downloadFromAWS(String filename) {
+        // TODO: Implement AWS S3 download
+        throw new UnsupportedOperationException("AWS S3 download not yet implemented");
+    }
+
+    private void deleteFromAWS(String filename) {
+        // TODO: Implement AWS S3 delete
+        throw new UnsupportedOperationException("AWS S3 delete not yet implemented");
+    }
+
+    // Azure Blob Storage methods (placeholders - implement with Azure SDK)
+
+    private String uploadToAzure(MultipartFile file, String filename) {
+        // TODO: Implement Azure Blob Storage upload
+        throw new UnsupportedOperationException("Azure Blob Storage upload not yet implemented. Please add Azure SDK dependency and implement.");
+    }
+
+    private InputStream downloadFromAzure(String filename) {
+        // TODO: Implement Azure download
+        throw new UnsupportedOperationException("Azure Blob Storage download not yet implemented");
+    }
+
+    private void deleteFromAzure(String filename) {
+        // TODO: Implement Azure delete
+        throw new UnsupportedOperationException("Azure Blob Storage delete not yet implemented");
+    }
+
+    // Google Cloud Storage methods (placeholders - implement with GCP SDK)
+
+    private String uploadToGCP(MultipartFile file, String filename) {
+        // TODO: Implement GCP Cloud Storage upload
+        throw new UnsupportedOperationException("GCP Cloud Storage upload not yet implemented. Please add GCP SDK dependency and implement.");
+    }
+
+    private InputStream downloadFromGCP(String filename) {
+        // TODO: Implement GCP download
+        throw new UnsupportedOperationException("GCP Cloud Storage download not yet implemented");
+    }
+
+    private void deleteFromGCP(String filename) {
+        // TODO: Implement GCP delete
+        throw new UnsupportedOperationException("GCP Cloud Storage delete not yet implemented");
+    }
+}

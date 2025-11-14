@@ -127,4 +127,38 @@ public class TemplateFormValueServiceImp implements TemplateFormValueService {
     public void deleteByMenuIdAndRecordId(Long menuId, Long recordId) {
         templateValueFormRepository.deleteByMenuIdAndRecordI(menuId, recordId);
     }
+
+    public void deleteRecord(Long menuId, Long recordId) {
+        try {
+            User user = userServiceImp.getLoggedUser();
+
+            // Delete all TemplateFormValueDefault records for this menu and record (including user filter)
+            templateFormValueDefaultServiceImp.deleteByMenuIdAndRecordIdAndUser(menuId, recordId, user);
+            deleteByMenuIdAndRecordId(menuId, recordId);
+            // Delete the actual record from Lead, Contact, or Merchant table
+            switch (Math.toIntExact(menuId)) {
+                case 4: // Lead
+                    leadServiceImp.deleteLead(recordId);
+                    log.info("Deleted Lead record with ID: {} by user: {}", recordId, user.getUsername());
+                    break;
+                case 5: // Contact
+                    contactServiceImp.deleteContact(recordId);
+                    log.info("Deleted Contact record with ID: {} by user: {}", recordId, user.getUsername());
+                    break;
+                case 6: // Merchant
+                    merchantServiceImp.deleteMerchant(recordId);
+                    log.info("Deleted Merchant record with ID: {} by user: {}", recordId, user.getUsername());
+                    break;
+                default:
+                    throw new CustomExceptions.CustomValidationException("Invalid menuId: " + menuId);
+            }
+
+            log.info("Successfully deleted record with ID: {} from menu: {} by user: {}", recordId, menuId, user.getUsername());
+        } catch (CustomExceptions.ResourceNotFoundException | CustomExceptions.CustomValidationException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error deleting record: {}", e.getMessage(), e);
+            throw new CustomExceptions.CustomValidationException("Failed to delete record: " + e.getMessage());
+        }
+    }
 }

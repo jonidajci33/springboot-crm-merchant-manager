@@ -34,11 +34,6 @@ public class ContactMerchantController {
         return ResponseEntity.ok(contactMerchantService.getAllContactMerchants());
     }
 
-    @GetMapping("/lead/{leadId}")
-    public ResponseEntity<List<ContactMerchant>> getContactMerchantsByLeadId(@PathVariable Long leadId) {
-        return ResponseEntity.ok(contactMerchantService.getContactMerchantsByLeadId(leadId));
-    }
-
     @GetMapping("/merchant/{merchantId}")
     public ResponseEntity<List<ContactMerchant>> getContactMerchantsByMerchantId(@PathVariable Long merchantId) {
         return ResponseEntity.ok(contactMerchantService.getContactMerchantsByMerchantId(merchantId));

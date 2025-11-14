@@ -68,8 +68,8 @@ public class ContactMerchantServiceImp implements ContactMerchantService {
     }
 
     @Override
-    public List<ContactMerchant> getContactMerchantsByLeadId(Long leadId) {
-        return contactMerchantRepository.findByLeadId(leadId);
+    public List<ContactMerchant> getContactMerchantsByLeadId(Long contactId) {
+        return contactMerchantRepository.findByContactId(contactId);
     }
 
     @Override

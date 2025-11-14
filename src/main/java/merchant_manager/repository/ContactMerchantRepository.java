@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface ContactMerchantRepository extends JpaRepository<ContactMerchant,Long> {
-    List<ContactMerchant> findByLeadId(Long leadId);
+    List<ContactMerchant> findByContactId(Long leadId);
     List<ContactMerchant> findByMerchantId(Long merchantId);
 }

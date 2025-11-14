@@ -22,10 +22,10 @@ import java.util.List;
 @SecurityRequirement(name = "bearerAuth")
 public class TemplateFormValueDefaultController {
 
-    private final TemplateFormValueDefaultServiceImp templateFormValueServiceImp;
+    private final TemplateFormValueDefaultServiceImp templateFormValueDefaultServiceImp;
 
-    public TemplateFormValueDefaultController(TemplateFormValueDefaultServiceImp templateFormValueServiceImp) {
-        this.templateFormValueServiceImp = templateFormValueServiceImp;
+    public TemplateFormValueDefaultController(TemplateFormValueDefaultServiceImp templateFormValueDefaultServiceImp) {
+        this.templateFormValueDefaultServiceImp = templateFormValueDefaultServiceImp;
     }
 
     @GetMapping("/by-menu-and-record")
@@ -44,28 +44,7 @@ public class TemplateFormValueDefaultController {
             @Parameter(description = "Record ID", required = true)
             @RequestParam Long recordId
     ) {
-        return ResponseEntity.ok(templateFormValueServiceImp.findByMenuIdAndRecordId(menuId, recordId));
-    }
-
-    @DeleteMapping("/record")
-    @Operation(
-            summary = "Delete a record",
-            description = "Deletes a record from Lead, Contact, or Merchant table based on menuId, along with all associated TemplateFormValueDefault entries for the logged-in user"
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Record successfully deleted"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "404", description = "Record not found"),
-            @ApiResponse(responseCode = "400", description = "Invalid request parameters")
-    })
-    public ResponseEntity<Void> deleteRecord(
-            @Parameter(description = "Menu ID (4=Lead, 5=Contact, 6=Merchant)", required = true)
-            @RequestParam Long menuId,
-            @Parameter(description = "Record ID to delete", required = true)
-            @RequestParam Long recordId
-    ) {
-        templateFormValueServiceImp.deleteRecord(menuId, recordId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(templateFormValueDefaultServiceImp.findByMenuIdAndRecordId(menuId, recordId));
     }
 
 }

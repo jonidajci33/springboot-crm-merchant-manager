@@ -3,6 +3,7 @@ package merchant_manager.service;
 import merchant_manager.models.DTO.AddValueRequest;
 import merchant_manager.models.TemplateFormValue;
 import merchant_manager.models.TemplateFormValueDefault;
+import merchant_manager.models.User;
 
 import java.util.List;
 
@@ -16,5 +17,5 @@ public interface TemplateFormValueDefaultService {
 
     List<TemplateFormValueDefault> findByMenuIdAndRecordId(Long menuId, Long recordId);
 
-    void deleteRecord(Long menuId, Long recordId);
+    void deleteByMenuIdAndRecordIdAndUser(Long menuId, Long recordId, User user);
 }
