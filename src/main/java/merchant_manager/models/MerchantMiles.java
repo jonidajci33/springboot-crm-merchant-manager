@@ -1,5 +1,6 @@
 package merchant_manager.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,7 +29,8 @@ public class MerchantMiles {
     @JoinColumn(name = "pointing_system_id", referencedColumnName = "id")
     private PointingSystem pointingSystem;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @JsonIgnore
+    @ManyToOne()
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 

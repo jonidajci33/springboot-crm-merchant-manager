@@ -1,5 +1,6 @@
 package merchant_manager.service.implementation;
 
+import merchant_manager.customExceptions.CustomExceptions;
 import merchant_manager.models.PointingSystem;
 import merchant_manager.repository.PointingSystemRepository;
 import merchant_manager.service.PointingSystemService;
@@ -24,7 +25,7 @@ public class PointingSystemServiceImp implements PointingSystemService {
     @Override
     public PointingSystem getPointingSystemById(Long id) {
         return pointingSystemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("PointingSystem not found with id: " + id));
+                .orElseThrow(() -> new CustomExceptions.ResourceNotFoundException("PointingSystem not found with id: " + id));
     }
 
     @Override
