@@ -1,0 +1,1345 @@
+{
+	"info": {
+		"_postman_id": "merchant-manager-crm-api",
+		"name": "Merchant Manager CRM API",
+		"description": "Complete API collection for Spring Boot Merchant Manager CRM application",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{bearerToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"testuser\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\",\n  \"name\": \"Test\",\n  \"lastName\": \"User\",\n  \"phone\": \"555-1234\",\n  \"companyName\": \"Test Company\",\n  \"jobTitle\": \"Manager\",\n  \"role\": \"ROLE_USER\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Logged User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/auth/getLoggedUser",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"getLoggedUser"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Menu",
+			"item": [
+				{
+					"name": "Get All Menus",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/menus",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"menus"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Template Form",
+			"item": [
+				{
+					"name": "Add Field to Template",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"key\": \"field1\",\n    \"label\": \"Field 1\",\n    \"type\": \"text\",\n    \"options\": {},\n    \"formProps\": {}\n  }\n]"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/template-forms/add?menuId=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"template-forms",
+								"add"
+							],
+							"query": [
+								{
+									"key": "menuId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Field from Template",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\"field1\", \"field2\"]"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/template-forms/remove",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"template-forms",
+								"remove"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Template Fields",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/template-forms?menuId=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"template-forms"
+							],
+							"query": [
+								{
+									"key": "menuId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Template Form Default",
+			"item": [
+				{
+					"name": "Get Columns by Menu ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/template-forms-default/menu/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"template-forms-default",
+								"menu",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Column by Key",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/template-forms-default/column/field1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"template-forms-default",
+								"column",
+								"field1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Field to Default Template",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"key\": \"column1\",\n    \"label\": \"Column 1\",\n    \"type\": \"text\",\n    \"options\": {},\n    \"formProps\": {}\n  }\n]"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/template-forms-default/add?menuId=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"template-forms-default",
+								"add"
+							],
+							"query": [
+								{
+									"key": "menuId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Field from Default Template",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\"column1\", \"column2\"]"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/template-forms-default/remove",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"template-forms-default",
+								"remove"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Dynamic Records",
+			"item": [
+				{
+					"name": "Query Dynamic Records (Simple)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"menuId\": 1,\n  \"page\": 0,\n  \"size\": 10,\n  \"sortBy\": \"id\",\n  \"sortDirection\": \"ASC\",\n  \"filters\": {}\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/dynamic-records/query-simple",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"dynamic-records",
+								"query-simple"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Dynamic Records by Menu ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/dynamic-records/menu/1?page=0&size=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"dynamic-records",
+								"menu",
+								"1"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Merchant TPL",
+			"item": [
+				{
+					"name": "Create Merchant TPL",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"merchantId\": 1,\n  \"templateIds\": [1, 2, 3]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/merchant-tpl",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"merchant-tpl"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Merchant TPL by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/merchant-tpl/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"merchant-tpl",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Merchant TPLs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/merchant-tpl",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"merchant-tpl"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Merchant TPLs by Merchant ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/merchant-tpl/merchant/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"merchant-tpl",
+								"merchant",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Merchant TPL",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/merchant-tpl/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"merchant-tpl",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Template Form Value",
+			"item": [
+				{
+					"name": "Add Value to Form",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"key\": \"field1\",\n    \"value\": \"Some value\"\n  },\n  {\n    \"key\": \"field2\",\n    \"value\": \"Another value\"\n  }\n]"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/template-forms-value/add?menuId=1&recordId=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"template-forms-value",
+								"add"
+							],
+							"query": [
+								{
+									"key": "menuId",
+									"value": "1"
+								},
+								{
+									"key": "recordId",
+									"value": "1",
+									"description": "Optional"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Values by Menu and Record ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/template-forms-value/by-menu-and-record?menuId=1&recordId=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"template-forms-value",
+								"by-menu-and-record"
+							],
+							"query": [
+								{
+									"key": "menuId",
+									"value": "1"
+								},
+								{
+									"key": "recordId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Record",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/template-forms-value/record?menuId=4&recordId=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"template-forms-value",
+								"record"
+							],
+							"query": [
+								{
+									"key": "menuId",
+									"value": "4",
+									"description": "4=Lead, 5=Contact, 6=Merchant"
+								},
+								{
+									"key": "recordId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Template Form Value Default",
+			"item": [
+				{
+					"name": "Get Default Values by Menu and Record ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/template-forms-value-default/by-menu-and-record?menuId=1&recordId=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"template-forms-value-default",
+								"by-menu-and-record"
+							],
+							"query": [
+								{
+									"key": "menuId",
+									"value": "1"
+								},
+								{
+									"key": "recordId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pointing System",
+			"item": [
+				{
+					"name": "Create Pointing System",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"plan\": \"Premium\",\n  \"pricingType\": \"Tiered\",\n  \"cardFee\": 2.5,\n  \"bps\": 250\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/pointing-system",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"pointing-system"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Pointing System",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"plan\": \"Premium Plus\",\n  \"pricingType\": \"Tiered\",\n  \"cardFee\": 2.75,\n  \"bps\": 275\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/pointing-system/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"pointing-system",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Pointing System by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/pointing-system/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"pointing-system",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Pointing Systems",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/pointing-system",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"pointing-system"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Pointing System",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/pointing-system/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"pointing-system",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Merchant Miles",
+			"item": [
+				{
+					"name": "Join Merchant Miles Program",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"merchantId\": 1,\n  \"pointingSystemId\": 1,\n  \"userId\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/merchant-miles/join",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"merchant-miles",
+								"join"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Merchant Miles by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/merchant-miles/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"merchant-miles",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Merchant Miles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/merchant-miles",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"merchant-miles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Merchant Miles",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/merchant-miles/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"merchant-miles",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Dejavoo Credentials",
+			"item": [
+				{
+					"name": "Create Dejavoo Credentials",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"merchantId\": 1,\n  \"registerId\": \"REG123456\",\n  \"authKey\": \"auth_key_here\",\n  \"apiUrl\": \"https://api.dejavoo.com\",\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/dejavoo-credentials",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"dejavoo-credentials"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Dejavoo Credentials",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"merchantId\": 1,\n  \"registerId\": \"REG123456\",\n  \"authKey\": \"updated_auth_key\",\n  \"apiUrl\": \"https://api.dejavoo.com\",\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/dejavoo-credentials/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"dejavoo-credentials",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Dejavoo Credentials by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/dejavoo-credentials/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"dejavoo-credentials",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Dejavoo Credentials by Merchant ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/dejavoo-credentials/merchant/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"dejavoo-credentials",
+								"merchant",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Dejavoo Credentials",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/dejavoo-credentials",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"dejavoo-credentials"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Dejavoo Credentials",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/dejavoo-credentials/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"dejavoo-credentials",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Dejavoo Transactions",
+			"item": [
+				{
+					"name": "Get Daily Transaction Volume",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/dejavoo-transactions/volume/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"dejavoo-transactions",
+								"volume",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Merchant Miles with Daily Volume",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/dejavoo-transactions/update-miles/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"dejavoo-transactions",
+								"update-miles",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Process All Merchant Transactions",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/dejavoo-transactions/process-all",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"dejavoo-transactions",
+								"process-all"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "File Storage",
+			"item": [
+				{
+					"name": "Upload Single File",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "entityType",
+									"value": "merchant",
+									"type": "text"
+								},
+								{
+									"key": "entityId",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "isPublic",
+									"value": "false",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/files/upload",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"files",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Multiple Files",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "files",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "entityType",
+									"value": "merchant",
+									"type": "text"
+								},
+								{
+									"key": "entityId",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "isPublic",
+									"value": "false",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/files/upload-multiple",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"files",
+								"upload-multiple"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download File",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/files/download/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"files",
+								"download",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get File Metadata",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/files/metadata/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"files",
+								"metadata",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get File URL",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/files/url/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"files",
+								"url",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Files by User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/files/user/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"files",
+								"user",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Files by Entity",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/files/entity/merchant/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"files",
+								"entity",
+								"merchant",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete File",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/files/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"files",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Contact Merchant",
+			"item": [
+				{
+					"name": "Create Contact-Merchant Relationships",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"contactId\": 1,\n    \"merchantId\": 1\n  },\n  {\n    \"contactId\": 2,\n    \"merchantId\": 1\n  }\n]"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/contact-merchant",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"contact-merchant"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Contact-Merchant by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/contact-merchant/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"contact-merchant",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Contact-Merchants",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/contact-merchant",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"contact-merchant"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Contact-Merchants by Merchant ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/contact-merchant/merchant/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"contact-merchant",
+								"merchant",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Contact-Merchant Relationship",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/contact-merchant/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"contact-merchant",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "bearerToken",
+			"value": "your_jwt_token_here",
+			"type": "string"
+		}
+	]
+}

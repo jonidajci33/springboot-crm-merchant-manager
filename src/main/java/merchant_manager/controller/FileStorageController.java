@@ -1,5 +1,7 @@
 package merchant_manager.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import merchant_manager.dto.FileUploadResponse;
 import merchant_manager.models.FileMetadata;
 import merchant_manager.service.implementation.CloudStorageServiceImp;
@@ -17,6 +19,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/files")
+@Tag(name = "File Storage", description = "Upload, download, and manage files in cloud storage (Supabase)")
 public class FileStorageController {
 
     private final CloudStorageServiceImp cloudStorageService;
@@ -25,15 +28,8 @@ public class FileStorageController {
         this.cloudStorageService = cloudStorageService;
     }
 
-    /**
-     * Upload a file
-     * Request params:
-     * - file: the file to upload (multipart/form-data)
-     * - entityType: optional entity type (e.g., "merchant", "user")
-     * - entityId: optional entity ID
-     * - isPublic: optional boolean for public access
-     */
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Upload file", description = "Upload a single file to cloud storage with optional entity association")
     public ResponseEntity<FileUploadResponse> uploadFile(
             @RequestParam("file") MultipartFile file,
             @RequestParam(value = "entityType", required = false) String entityType,
@@ -44,10 +40,8 @@ public class FileStorageController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Upload multiple files
-     */
     @PostMapping(value = "/upload-multiple", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Upload multiple files", description = "Upload multiple files to cloud storage in a single request")
     public ResponseEntity<Map<String, Object>> uploadMultipleFiles(
             @RequestParam("files") MultipartFile[] files,
             @RequestParam(value = "entityType", required = false) String entityType,
@@ -72,10 +66,8 @@ public class FileStorageController {
         }
     }
 
-    /**
-     * Download a file by ID
-     */
     @GetMapping("/download/{fileId}")
+    @Operation(summary = "Download file", description = "Download a file from cloud storage by file ID")
     public ResponseEntity<InputStreamResource> downloadFile(@PathVariable Long fileId) {
         try {
             FileMetadata metadata = cloudStorageService.getFileMetadata(fileId);
@@ -94,10 +86,8 @@ public class FileStorageController {
         }
     }
 
-    /**
-     * Get file metadata by ID
-     */
     @GetMapping("/metadata/{fileId}")
+    @Operation(summary = "Get file metadata", description = "Retrieve metadata for a specific file")
     public ResponseEntity<FileMetadata> getFileMetadata(@PathVariable Long fileId) {
         try {
             FileMetadata metadata = cloudStorageService.getFileMetadata(fileId);
@@ -107,10 +97,8 @@ public class FileStorageController {
         }
     }
 
-    /**
-     * Get file URL by ID
-     */
     @GetMapping("/url/{fileId}")
+    @Operation(summary = "Get file URL", description = "Get the cloud storage URL for a file")
     public ResponseEntity<Map<String, String>> getFileUrl(@PathVariable Long fileId) {
         try {
             String url = cloudStorageService.getFileUrl(fileId);
@@ -123,19 +111,15 @@ public class FileStorageController {
         }
     }
 
-    /**
-     * Get all files uploaded by a user
-     */
     @GetMapping("/user/{userId}")
+    @Operation(summary = "Get files by user", description = "Retrieve all files uploaded by a specific user")
     public ResponseEntity<List<FileMetadata>> getFilesByUser(@PathVariable Long userId) {
         List<FileMetadata> files = cloudStorageService.getFilesByUser(userId);
         return ResponseEntity.ok(files);
     }
 
-    /**
-     * Get all files for an entity
-     */
     @GetMapping("/entity/{entityType}/{entityId}")
+    @Operation(summary = "Get files by entity", description = "Retrieve all files associated with a specific entity (e.g., merchant, user)")
     public ResponseEntity<List<FileMetadata>> getFilesByEntity(
             @PathVariable String entityType,
             @PathVariable Long entityId) {
@@ -143,10 +127,8 @@ public class FileStorageController {
         return ResponseEntity.ok(files);
     }
 
-    /**
-     * Delete a file
-     */
     @DeleteMapping("/{fileId}")
+    @Operation(summary = "Delete file", description = "Delete a file from cloud storage and remove its metadata")
     public ResponseEntity<Map<String, String>> deleteFile(@PathVariable Long fileId) {
         try {
             cloudStorageService.deleteFile(fileId);
