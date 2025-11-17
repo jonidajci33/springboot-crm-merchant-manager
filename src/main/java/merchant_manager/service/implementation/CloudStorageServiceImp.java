@@ -62,7 +62,7 @@ public class CloudStorageServiceImp implements CloudStorageService {
     }
 
     @Override
-    public FileUploadResponse uploadFile(MultipartFile file, String entityType, Long entityId, Boolean isPublic) {
+    public FileMetadata uploadFile(MultipartFile file) {
         // Validate file
         if (file.isEmpty()) {
             throw new RuntimeException("Cannot upload empty file");
@@ -117,24 +117,7 @@ public class CloudStorageServiceImp implements CloudStorageService {
             metadata.setBucketName(storageProperties.getBucketName());
             metadata.setFileUrl(fileUrl);
             metadata.setUploadedBy(currentUser);
-            metadata.setIsPublic(isPublic != null ? isPublic : false);
-            metadata.setEntityType(entityType);
-            metadata.setEntityId(entityId);
-
-            FileMetadata savedMetadata = fileMetadataRepository.save(metadata);
-
-            logger.info("File uploaded successfully: {} (ID: {})", originalFilename, savedMetadata.getId());
-
-            return new FileUploadResponse(
-                    savedMetadata.getId(),
-                    originalFilename,
-                    storedFilename,
-                    fileUrl,
-                    file.getSize(),
-                    file.getContentType(),
-                    "File uploaded successfully",
-                    "success"
-            );
+            return fileMetadataRepository.save(metadata);
 
         } catch (Exception e) {
             logger.error("Error uploading file", e);
@@ -201,10 +184,10 @@ public class CloudStorageServiceImp implements CloudStorageService {
         return fileMetadataRepository.findByUploadedById(userId);
     }
 
-    @Override
-    public List<FileMetadata> getFilesByEntity(String entityType, Long entityId) {
-        return fileMetadataRepository.findByEntityTypeAndEntityId(entityType, entityId);
-    }
+//    @Override
+//    public List<FileMetadata> getFilesByEntity(String entityType, Long entityId) {
+//        return fileMetadataRepository.findByEntityTypeAndEntityId(entityType, entityId);
+//    }
 
     @Override
     public String getFileUrl(Long fileId) {

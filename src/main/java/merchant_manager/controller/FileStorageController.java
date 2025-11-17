@@ -28,43 +28,43 @@ public class FileStorageController {
         this.cloudStorageService = cloudStorageService;
     }
 
-    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Upload file", description = "Upload a single file to cloud storage with optional entity association")
-    public ResponseEntity<FileUploadResponse> uploadFile(
-            @RequestParam("file") MultipartFile file,
-            @RequestParam(value = "entityType", required = false) String entityType,
-            @RequestParam(value = "entityId", required = false) Long entityId,
-            @RequestParam(value = "isPublic", required = false, defaultValue = "false") Boolean isPublic) {
+//    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    @Operation(summary = "Upload file", description = "Upload a single file to cloud storage with optional entity association")
+//    public ResponseEntity<FileUploadResponse> uploadFile(
+//            @RequestParam("file") MultipartFile file,
+//            @RequestParam(value = "entityType", required = false) String entityType,
+//            @RequestParam(value = "entityId", required = false) Long entityId,
+//            @RequestParam(value = "isPublic", required = false, defaultValue = "false") Boolean isPublic) {
+//
+//        FileUploadResponse response = cloudStorageService.uploadFile(file, entityType, entityId, isPublic);
+//        return ResponseEntity.ok(response);
+//    }
 
-        FileUploadResponse response = cloudStorageService.uploadFile(file, entityType, entityId, isPublic);
-        return ResponseEntity.ok(response);
-    }
-
-    @PostMapping(value = "/upload-multiple", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Upload multiple files", description = "Upload multiple files to cloud storage in a single request")
-    public ResponseEntity<Map<String, Object>> uploadMultipleFiles(
-            @RequestParam("files") MultipartFile[] files,
-            @RequestParam(value = "entityType", required = false) String entityType,
-            @RequestParam(value = "entityId", required = false) Long entityId,
-            @RequestParam(value = "isPublic", required = false, defaultValue = "false") Boolean isPublic) {
-
-        Map<String, Object> response = new HashMap<>();
-        try {
-            List<FileUploadResponse> uploadedFiles = new java.util.ArrayList<>();
-            for (MultipartFile file : files) {
-                FileUploadResponse fileResponse = cloudStorageService.uploadFile(file, entityType, entityId, isPublic);
-                uploadedFiles.add(fileResponse);
-            }
-            response.put("status", "success");
-            response.put("files", uploadedFiles);
-            response.put("count", uploadedFiles.size());
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            response.put("status", "error");
-            response.put("message", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
-        }
-    }
+//    @PostMapping(value = "/upload-multiple", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    @Operation(summary = "Upload multiple files", description = "Upload multiple files to cloud storage in a single request")
+//    public ResponseEntity<Map<String, Object>> uploadMultipleFiles(
+//            @RequestParam("files") MultipartFile[] files,
+//            @RequestParam(value = "entityType", required = false) String entityType,
+//            @RequestParam(value = "entityId", required = false) Long entityId,
+//            @RequestParam(value = "isPublic", required = false, defaultValue = "false") Boolean isPublic) {
+//
+//        Map<String, Object> response = new HashMap<>();
+//        try {
+//            List<FileUploadResponse> uploadedFiles = new java.util.ArrayList<>();
+//            for (MultipartFile file : files) {
+//                FileUploadResponse fileResponse = cloudStorageService.uploadFile(file, entityType, entityId, isPublic);
+//                uploadedFiles.add(fileResponse);
+//            }
+//            response.put("status", "success");
+//            response.put("files", uploadedFiles);
+//            response.put("count", uploadedFiles.size());
+//            return ResponseEntity.ok(response);
+//        } catch (Exception e) {
+//            response.put("status", "error");
+//            response.put("message", e.getMessage());
+//            return ResponseEntity.badRequest().body(response);
+//        }
+//    }
 
     @GetMapping("/download/{fileId}")
     @Operation(summary = "Download file", description = "Download a file from cloud storage by file ID")
@@ -118,14 +118,14 @@ public class FileStorageController {
         return ResponseEntity.ok(files);
     }
 
-    @GetMapping("/entity/{entityType}/{entityId}")
-    @Operation(summary = "Get files by entity", description = "Retrieve all files associated with a specific entity (e.g., merchant, user)")
-    public ResponseEntity<List<FileMetadata>> getFilesByEntity(
-            @PathVariable String entityType,
-            @PathVariable Long entityId) {
-        List<FileMetadata> files = cloudStorageService.getFilesByEntity(entityType, entityId);
-        return ResponseEntity.ok(files);
-    }
+//    @GetMapping("/entity/{entityType}/{entityId}")
+//    @Operation(summary = "Get files by entity", description = "Retrieve all files associated with a specific entity (e.g., merchant, user)")
+//    public ResponseEntity<List<FileMetadata>> getFilesByEntity(
+//            @PathVariable String entityType,
+//            @PathVariable Long entityId) {
+//        List<FileMetadata> files = cloudStorageService.getFilesByEntity(entityType, entityId);
+//        return ResponseEntity.ok(files);
+//    }
 
     @DeleteMapping("/{fileId}")
     @Operation(summary = "Delete file", description = "Delete a file from cloud storage and remove its metadata")

@@ -9,16 +9,8 @@ import java.util.List;
 
 public interface CloudStorageService {
 
-    /**
-     * Upload a file to cloud storage
-     *
-     * @param file the file to upload
-     * @param entityType optional entity type (e.g., "merchant", "user")
-     * @param entityId optional entity ID
-     * @param isPublic whether the file should be publicly accessible
-     * @return FileUploadResponse with file details
-     */
-    FileUploadResponse uploadFile(MultipartFile file, String entityType, Long entityId, Boolean isPublic);
+
+    FileMetadata uploadFile(MultipartFile file);
 
     /**
      * Download a file from cloud storage
@@ -58,7 +50,7 @@ public interface CloudStorageService {
      * @param entityId entity ID
      * @return List of FileMetadata
      */
-    List<FileMetadata> getFilesByEntity(String entityType, Long entityId);
+//    List<FileMetadata> getFilesByEntity(String entityType, Long entityId);
 
     /**
      * Get public URL for a file

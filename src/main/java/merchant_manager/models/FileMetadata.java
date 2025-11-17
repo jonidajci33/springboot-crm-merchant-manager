@@ -1,5 +1,6 @@
 package merchant_manager.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -43,6 +44,7 @@ public class FileMetadata {
     @Column(name = "file_url")
     private String fileUrl;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "uploaded_by", referencedColumnName = "id")
     private User uploadedBy;
@@ -52,12 +54,6 @@ public class FileMetadata {
 
     @Column(name = "is_public")
     private Boolean isPublic;
-
-    @Column(name = "entity_type")
-    private String entityType;
-
-    @Column(name = "entity_id")
-    private Long entityId;
 
     @PrePersist
     protected void onCreate() {

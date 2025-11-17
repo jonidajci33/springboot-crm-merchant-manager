@@ -5,7 +5,6 @@ import merchant_manager.dto.DejavooUserResponse;
 import merchant_manager.models.DejavooUser;
 import merchant_manager.repository.DejavooUserRepository;
 import merchant_manager.service.DejavooUserService;
-import merchant_manager.util.PasswordEncryptionUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 

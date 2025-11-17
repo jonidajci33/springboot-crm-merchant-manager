@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface FileMetadataRepository extends JpaRepository<FileMetadata,Long> {
     List<FileMetadata> findByUploadedById(Long userId);
-    List<FileMetadata> findByEntityTypeAndEntityId(String entityType, Long entityId);
+//    List<FileMetadata> findByEntityTypeAndEntityId(String entityType, Long entityId);
     List<FileMetadata> findByStoredFilename(String storedFilename);
 }
