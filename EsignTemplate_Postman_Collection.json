@@ -1,0 +1,267 @@
+{
+  "info": {
+    "_postman_id": "esign-template-api-2025",
+    "name": "E-Signature Template API",
+    "description": "Complete API collection for managing e-signature templates with file uploads",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Template - Full Example",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": [],
+              "description": "Upload your PDF/DOCX template file here"
+            },
+            {
+              "key": "esignTemplate",
+              "value": "{\n  \"name\": \"Employee Contract Template\",\n  \"description\": \"Standard employment contract template for new hires\",\n  \"fields\": {\n    \"employeeName\": \"Employee Full Name\",\n    \"employeeId\": \"Employee ID Number\",\n    \"position\": \"Job Position\",\n    \"department\": \"Department\",\n    \"startDate\": \"Employment Start Date\",\n    \"salary\": \"Annual Salary\",\n    \"manager\": \"Reporting Manager\",\n    \"workLocation\": \"Work Location\",\n    \"employmentType\": \"Full-time/Part-time/Contract\",\n    \"signatureDate\": \"Date of Signature\"\n  }\n}",
+              "type": "text",
+              "contentType": "application/json",
+              "description": "EsignTemplate JSON object with all fields"
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/esign-templates",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "esign-templates"
+          ]
+        },
+        "description": "Create a new e-signature template with file upload - Full example with all fields"
+      },
+      "response": []
+    },
+    {
+      "name": "Create Template - Minimal",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": [],
+              "description": "Upload template file"
+            },
+            {
+              "key": "esignTemplate",
+              "value": "{\n  \"name\": \"Simple NDA Template\"\n}",
+              "type": "text",
+              "contentType": "application/json",
+              "description": "Minimal request with only required name field"
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/esign-templates",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "esign-templates"
+          ]
+        },
+        "description": "Create template with only required fields (name + file)"
+      },
+      "response": []
+    },
+    {
+      "name": "Create Template - NDA",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "esignTemplate",
+              "value": "{\n  \"name\": \"Non-Disclosure Agreement Template\",\n  \"description\": \"Standard NDA for business partnerships\",\n  \"fields\": {\n    \"partyA\": \"First Party Name\",\n    \"partyB\": \"Second Party Name\",\n    \"effectiveDate\": \"Agreement Effective Date\",\n    \"expirationDate\": \"Agreement Expiration Date\",\n    \"confidentialInfo\": \"Description of Confidential Information\",\n    \"partyASignature\": \"Party A Signature\",\n    \"partyBSignature\": \"Party B Signature\",\n    \"witnessName\": \"Witness Name\",\n    \"witnessSignature\": \"Witness Signature\"\n  }\n}",
+              "type": "text",
+              "contentType": "application/json"
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/esign-templates",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "esign-templates"
+          ]
+        },
+        "description": "Create NDA template with specific fields"
+      },
+      "response": []
+    },
+    {
+      "name": "Create Template - Service Agreement",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "esignTemplate",
+              "value": "{\n  \"name\": \"Service Agreement Template\",\n  \"description\": \"Comprehensive service agreement for client contracts\",\n  \"fields\": {\n    \"clientName\": \"Client Company Name\",\n    \"clientAddress\": \"Client Address\",\n    \"clientContact\": \"Client Contact Person\",\n    \"clientEmail\": \"Contact Email\",\n    \"serviceProvider\": \"Service Provider Name\",\n    \"providerAddress\": \"Provider Address\",\n    \"agreementDate\": \"Agreement Date\",\n    \"serviceDescription\": \"Service Description\",\n    \"paymentTerms\": \"Payment Terms\",\n    \"totalAmount\": \"Total Contract Value\",\n    \"duration\": \"Contract Duration\",\n    \"deliverables\": \"Project Deliverables\",\n    \"clientSignature\": \"Client Signature\",\n    \"providerSignature\": \"Provider Signature\",\n    \"signatureDate\": \"Signature Date\"\n  }\n}",
+              "type": "text",
+              "contentType": "application/json"
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/esign-templates",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "esign-templates"
+          ]
+        },
+        "description": "Create service agreement template with comprehensive fields"
+      },
+      "response": []
+    },
+    {
+      "name": "Create Template - With Existing File",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": [],
+              "description": "Must match the original filename of the fileMetadata ID"
+            },
+            {
+              "key": "esignTemplate",
+              "value": "{\n  \"name\": \"Updated Contract Template v2\",\n  \"description\": \"Reusing existing uploaded file\",\n  \"fileMetadata\": {\n    \"id\": 1\n  },\n  \"fields\": {\n    \"version\": \"2.0\",\n    \"updatedBy\": \"HR Department\",\n    \"updateDate\": \"2025-01-17\"\n  }\n}",
+              "type": "text",
+              "contentType": "application/json",
+              "description": "Link to existing fileMetadata by ID"
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/esign-templates",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "esign-templates"
+          ]
+        },
+        "description": "Create template linking to existing fileMetadata (file must match original filename)"
+      },
+      "response": []
+    },
+    {
+      "name": "Create Template - Lease Agreement",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": []
+            },
+            {
+              "key": "esignTemplate",
+              "value": "{\n  \"name\": \"Residential Lease Agreement\",\n  \"description\": \"Standard residential property lease agreement\",\n  \"fields\": {\n    \"landlordName\": \"Landlord Full Name\",\n    \"tenantName\": \"Tenant Full Name\",\n    \"propertyAddress\": \"Property Address\",\n    \"rentAmount\": \"Monthly Rent Amount\",\n    \"securityDeposit\": \"Security Deposit\",\n    \"leaseStartDate\": \"Lease Start Date\",\n    \"leaseEndDate\": \"Lease End Date\",\n    \"paymentDueDate\": \"Monthly Payment Due Date\",\n    \"utilitiesIncluded\": \"Utilities Included\",\n    \"landlordSignature\": \"Landlord Signature\",\n    \"tenantSignature\": \"Tenant Signature\"\n  }\n}",
+              "type": "text",
+              "contentType": "application/json"
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/esign-templates",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "esign-templates"
+          ]
+        },
+        "description": "Create residential lease agreement template"
+      },
+      "response": []
+    },
+    {
+      "name": "Get Template by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/esign-templates/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "esign-templates",
+            "1"
+          ]
+        },
+        "description": "Retrieve an e-signature template by its ID"
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ]
+}
