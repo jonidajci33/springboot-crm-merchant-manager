@@ -76,6 +76,7 @@ public class MerchantMilesServiceImp implements MerchantMilesService {
         merchantMiles.setPointingSystem(pointingSystem);
         merchantMiles.setUser(currentUser);
         merchantMiles.setPoints(0L);
+        merchantMiles.setCreatedBy(userServiceImp.getLoggedUser().getUsername());
 
         // Save and return
         return merchantMilesRepository.save(merchantMiles);

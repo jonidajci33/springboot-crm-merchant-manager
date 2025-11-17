@@ -9,5 +9,4 @@ import java.util.Optional;
 public interface EsignTemplateRepository extends JpaRepository<EsignTemplate, Long> {
 
     Optional<EsignTemplate> findById(Long id);
-    Optional<List<EsignTemplate>> findAllByMerchantId(Long merchantId);
 }

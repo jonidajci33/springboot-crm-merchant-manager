@@ -2,6 +2,8 @@ package merchant_manager.models;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,9 +31,19 @@ public abstract class BaseModel {
     @Column(name = "last_updated_by")
     protected String lastUpdatedBy;
 
-    // Constructor
-    public BaseModel() {
+    @PrePersist
+    protected void onCreate() {
         this.createdAt = ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime();
         this.updatedAt = ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime();
+    }
+
+    // Constructor
+    public BaseModel() {
+
     }
 }

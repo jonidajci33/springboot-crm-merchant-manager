@@ -1,0 +1,296 @@
+{
+  "info": {
+    "_postman_id": "generic-data-api-2025",
+    "name": "Generic Data Query API",
+    "description": "Dynamic query endpoint for all entities with automatic user filtering and pagination",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Query Merchants - All",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"entityName\": \"Merchant\",\n  \"page\": 0,\n  \"size\": 10,\n  \"sortBy\": \"createdAt\",\n  \"sortDirection\": \"DESC\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/generic-data/query",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "generic-data",
+            "query"
+          ]
+        },
+        "description": "Get all merchants for the logged-in user with pagination"
+      },
+      "response": []
+    },
+    {
+      "name": "Query Merchants - With Filters",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"entityName\": \"Merchant\",\n  \"filters\": [\n    {\n      \"field\": \"merchantName\",\n      \"operator\": \"CONTAINS\",\n      \"value\": \"ABC\"\n    }\n  ],\n  \"page\": 0,\n  \"size\": 10,\n  \"sortBy\": \"merchantName\",\n  \"sortDirection\": \"ASC\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/generic-data/query",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "generic-data",
+            "query"
+          ]
+        },
+        "description": "Get merchants where name contains 'ABC' for the logged-in user"
+      },
+      "response": []
+    },
+    {
+      "name": "Query Contacts - All",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"entityName\": \"Contact\",\n  \"page\": 0,\n  \"size\": 20,\n  \"sortBy\": \"createdAt\",\n  \"sortDirection\": \"DESC\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/generic-data/query",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "generic-data",
+            "query"
+          ]
+        },
+        "description": "Get all contacts for the logged-in user"
+      },
+      "response": []
+    },
+    {
+      "name": "Query Contacts - Multiple Filters",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"entityName\": \"Contact\",\n  \"filters\": [\n    {\n      \"field\": \"firstName\",\n      \"operator\": \"STARTS_WITH\",\n      \"value\": \"John\"\n    },\n    {\n      \"field\": \"email\",\n      \"operator\": \"ENDS_WITH\",\n      \"value\": \"@gmail.com\"\n    }\n  ],\n  \"page\": 0,\n  \"size\": 10\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/generic-data/query",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "generic-data",
+            "query"
+          ]
+        },
+        "description": "Get contacts with firstName starting with 'John' AND email ending with '@gmail.com'"
+      },
+      "response": []
+    },
+    {
+      "name": "Query Leads - Date Range",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"entityName\": \"Lead\",\n  \"filters\": [\n    {\n      \"field\": \"createdAt\",\n      \"operator\": \"GREATER_THAN_OR_EQUAL\",\n      \"value\": \"2024-01-01T00:00:00\"\n    },\n    {\n      \"field\": \"createdAt\",\n      \"operator\": \"LESS_THAN_OR_EQUAL\",\n      \"value\": \"2024-12-31T23:59:59\"\n    }\n  ],\n  \"page\": 0,\n  \"size\": 10,\n  \"sortBy\": \"createdAt\",\n  \"sortDirection\": \"DESC\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/generic-data/query",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "generic-data",
+            "query"
+          ]
+        },
+        "description": "Get leads created in 2024 for the logged-in user"
+      },
+      "response": []
+    },
+    {
+      "name": "Query DejavooCredentials - By Merchant",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"entityName\": \"DejavooCredentials\",\n  \"filters\": [\n    {\n      \"field\": \"apiKey\",\n      \"operator\": \"IS_NOT_NULL\"\n    }\n  ],\n  \"page\": 0,\n  \"size\": 10\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/generic-data/query",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "generic-data",
+            "query"
+          ]
+        },
+        "description": "Get Dejavoo credentials where apiKey is not null"
+      },
+      "response": []
+    },
+    {
+      "name": "Query FileMetadata - Recent Files",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"entityName\": \"FileMetadata\",\n  \"filters\": [\n    {\n      \"field\": \"contentType\",\n      \"operator\": \"IN\",\n      \"value\": \"application/pdf,image/png,image/jpeg\"\n    }\n  ],\n  \"page\": 0,\n  \"size\": 15,\n  \"sortBy\": \"uploadedAt\",\n  \"sortDirection\": \"DESC\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/generic-data/query",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "generic-data",
+            "query"
+          ]
+        },
+        "description": "Get recent PDF and image files uploaded by the logged-in user"
+      },
+      "response": []
+    },
+    {
+      "name": "Query MerchantMiles - By Points",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"entityName\": \"MerchantMiles\",\n  \"filters\": [\n    {\n      \"field\": \"points\",\n      \"operator\": \"GREATER_THAN\",\n      \"value\": \"1000\"\n    }\n  ],\n  \"page\": 0,\n  \"size\": 10,\n  \"sortBy\": \"points\",\n  \"sortDirection\": \"DESC\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/generic-data/query",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "generic-data",
+            "query"
+          ]
+        },
+        "description": "Get merchant miles with more than 1000 points"
+      },
+      "response": []
+    },
+    {
+      "name": "Query ContactMerchant - Active Only",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"entityName\": \"ContactMerchant\",\n  \"page\": 0,\n  \"size\": 10,\n  \"sortBy\": \"createdAt\",\n  \"sortDirection\": \"DESC\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/generic-data/query",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "generic-data",
+            "query"
+          ]
+        },
+        "description": "Get all contact-merchant relationships for the logged-in user"
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ]
+}

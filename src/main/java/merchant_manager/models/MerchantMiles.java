@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MerchantMiles {
+public class MerchantMiles extends BaseModel{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
