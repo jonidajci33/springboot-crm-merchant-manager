@@ -1,5 +1,6 @@
 package merchant_manager.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,6 +20,7 @@ public class Contact extends BaseModel{
     @Column(name = "id")
     private Long id;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "contact", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ContactMerchant> contactMerchants;
 }
