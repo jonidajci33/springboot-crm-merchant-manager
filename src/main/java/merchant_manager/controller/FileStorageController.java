@@ -111,6 +111,66 @@ public class FileStorageController {
         }
     }
 
+    @GetMapping("/signed-url/{fileId}")
+    @Operation(
+        summary = "Get signed URL",
+        description = "Create or retrieve a cached signed URL for secure file access with 1 hour expiration. " +
+                     "If a valid cached URL exists (less than 1 hour old), returns the cached URL. " +
+                     "Otherwise, creates a new signed URL and updates the cache."
+    )
+    public ResponseEntity<Map<String, Object>> createSignedUrl(@PathVariable Long fileId) {
+        try {
+            String signedUrl = cloudStorageService.createSignedUrl(fileId);
+            Map<String, Object> response = new HashMap<>();
+            response.put("fileId", fileId);
+            response.put("signedUrl", signedUrl);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "error");
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @GetMapping("/debug/{fileId}")
+    @Operation(
+        summary = "Debug file information",
+        description = "Get detailed information about a file including all paths and URLs used for debugging purposes"
+    )
+    public ResponseEntity<Map<String, Object>> debugFileInfo(@PathVariable Long fileId) {
+        try {
+            FileMetadata metadata = cloudStorageService.getFileMetadata(fileId);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("fileId", metadata.getId());
+            response.put("originalFilename", metadata.getOriginalFilename());
+            response.put("storedFilename", metadata.getStoredFilename());
+            response.put("filePath", metadata.getFilePath());
+            response.put("fileUrl", metadata.getFileUrl());
+            response.put("cloudProvider", metadata.getCloudProvider());
+            response.put("bucketName", metadata.getBucketName());
+            response.put("contentType", metadata.getContentType());
+            response.put("fileSize", metadata.getFileSize());
+            response.put("uploadedAt", metadata.getUploadedAt());
+            response.put("isPublic", metadata.getIsPublic());
+
+            // Add what would be used for signed URL
+            Map<String, String> signedUrlInfo = new HashMap<>();
+            signedUrlInfo.put("filenameUsed", metadata.getStoredFilename());
+            signedUrlInfo.put("bucketUsed", metadata.getBucketName());
+            signedUrlInfo.put("expectedPath", metadata.getBucketName() + "/" + metadata.getStoredFilename());
+            response.put("signedUrlInfo", signedUrlInfo);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "error");
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
     @GetMapping("/user/{userId}")
     @Operation(summary = "Get files by user", description = "Retrieve all files uploaded by a specific user")
     public ResponseEntity<List<FileMetadata>> getFilesByUser(@PathVariable Long userId) {

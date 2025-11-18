@@ -59,4 +59,14 @@ public interface CloudStorageService {
      * @return public URL string
      */
     String getFileUrl(Long fileId);
+
+    /**
+     * Create a signed URL for a file with 1 hour expiration
+     * If a valid cached URL exists (less than 1 hour old), returns the cached URL
+     * Otherwise, creates a new signed URL and updates the cache
+     *
+     * @param fileId the file metadata ID
+     * @return signed URL string with 1 hour expiration
+     */
+    String createSignedUrl(Long fileId);
 }

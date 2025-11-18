@@ -157,6 +157,12 @@ public class SupabaseStorageService {
                     storageProperties.getBucketName(),
                     filename);
 
+            logger.debug("Creating signed URL - Endpoint: {}, Bucket: {}, Filename: {}",
+                    storageProperties.getEndpoint(),
+                    storageProperties.getBucketName(),
+                    filename);
+            logger.info("Full sign URL: {}", signUrl);
+
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", "Bearer " + storageProperties.getSecretKey());
             headers.setContentType(MediaType.APPLICATION_JSON);
@@ -171,18 +177,27 @@ public class SupabaseStorageService {
                     Map.class
             );
 
+            logger.debug("Response status: {}, Body: {}", response.getStatusCode(), response.getBody());
+
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 String signedPath = (String) response.getBody().get("signedURL");
-                String signedUrl = storageProperties.getEndpoint() + signedPath;
+                logger.info(signedPath);
+                if (signedPath == null) {
+                    logger.error("signedURL not found in response body: {}", response.getBody());
+                    throw new RuntimeException("signedURL not found in response");
+                }
+                String signedUrl = storageProperties.getEndpoint()+ "/storage/v1" + signedPath;
                 logger.info("Created signed URL for file: {}", filename);
                 return signedUrl;
             } else {
-                throw new RuntimeException("Failed to create signed URL");
+                logger.error("Failed to create signed URL. Status: {}, Body: {}",
+                        response.getStatusCode(), response.getBody());
+                throw new RuntimeException("Failed to create signed URL: " + response.getBody());
             }
 
         } catch (Exception e) {
-            logger.error("Error creating signed URL", e);
-            throw new RuntimeException("Failed to create signed URL", e);
+            logger.error("Error creating signed URL for file: {}. Error: {}", filename, e.getMessage(), e);
+            throw new RuntimeException("Failed to create signed URL for file: " + filename + ". Error: " + e.getMessage(), e);
         }
     }
 

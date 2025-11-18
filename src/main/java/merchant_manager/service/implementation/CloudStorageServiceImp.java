@@ -3,8 +3,10 @@ package merchant_manager.service.implementation;
 import merchant_manager.config.CloudStorageProperties;
 import merchant_manager.dto.FileUploadResponse;
 import merchant_manager.models.FileMetadata;
+import merchant_manager.models.SignedUrlCache;
 import merchant_manager.models.User;
 import merchant_manager.repository.FileMetadataRepository;
+import merchant_manager.repository.SignedUrlCacheRepository;
 import merchant_manager.service.CloudStorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,13 +31,16 @@ public class CloudStorageServiceImp implements CloudStorageService {
     private static final Logger logger = LoggerFactory.getLogger(CloudStorageServiceImp.class);
 
     private final FileMetadataRepository fileMetadataRepository;
+    private final SignedUrlCacheRepository signedUrlCacheRepository;
     private final CloudStorageProperties storageProperties;
     private final SupabaseStorageService supabaseStorageService;
 
     public CloudStorageServiceImp(FileMetadataRepository fileMetadataRepository,
+                                  SignedUrlCacheRepository signedUrlCacheRepository,
                                   CloudStorageProperties storageProperties,
                                   SupabaseStorageService supabaseStorageService) {
         this.fileMetadataRepository = fileMetadataRepository;
+        this.signedUrlCacheRepository = signedUrlCacheRepository;
         this.storageProperties = storageProperties;
         this.supabaseStorageService = supabaseStorageService;
         initializeStorage();
@@ -193,6 +198,70 @@ public class CloudStorageServiceImp implements CloudStorageService {
     public String getFileUrl(Long fileId) {
         FileMetadata metadata = getFileMetadata(fileId);
         return metadata.getFileUrl();
+    }
+
+    @Override
+    public String createSignedUrl(Long fileId) {
+        FileMetadata metadata = getFileMetadata(fileId);
+
+        // Check if there's a cached signed URL
+        var cachedUrlOpt = signedUrlCacheRepository.findByFileMetadataId(fileId);
+
+        if (cachedUrlOpt.isPresent()) {
+            SignedUrlCache cachedUrl = cachedUrlOpt.get();
+
+            // If the cached URL is still valid (less than 1 hour old), return it
+            if (cachedUrl.isValid()) {
+                logger.info("Returning cached signed URL for file: {}", fileId);
+                return cachedUrl.getSignedUrl();
+            } else {
+                logger.info("Cached signed URL expired for file: {}, creating new one", fileId);
+            }
+        }
+
+        // Create a new signed URL
+        String newSignedUrl;
+
+        if ("supabase".equalsIgnoreCase(metadata.getCloudProvider())) {
+            try {
+                // 1 hour = 3600 seconds
+                newSignedUrl = supabaseStorageService.createSignedUrl(metadata.getStoredFilename(), 3600);
+            } catch (Exception e) {
+                // If signed URL creation fails (e.g., bucket is public), fall back to public URL
+                logger.warn("Failed to create signed URL for file {}: {}. Falling back to public URL.",
+                        fileId, e.getMessage());
+
+                // Return the public URL instead
+                newSignedUrl = supabaseStorageService.getPublicUrl(metadata.getStoredFilename());
+            }
+        } else {
+            // For other providers, you can implement similar logic
+            // For now, fallback to the regular file URL
+            logger.warn("Signed URL not supported for provider: {}, returning regular URL", metadata.getCloudProvider());
+            return metadata.getFileUrl();
+        }
+
+        // Save or update the cache
+        SignedUrlCache urlCache;
+        if (cachedUrlOpt.isPresent()) {
+            // Update existing cache
+            urlCache = cachedUrlOpt.get();
+            urlCache.setSignedUrl(newSignedUrl);
+            urlCache.setCreatedAt(LocalDateTime.now());
+            urlCache.setExpiresAt(LocalDateTime.now().plusHours(1));
+        } else {
+            // Create new cache entry
+            urlCache = new SignedUrlCache();
+            urlCache.setFileMetadata(metadata);
+            urlCache.setSignedUrl(newSignedUrl);
+            urlCache.setCreatedAt(LocalDateTime.now());
+            urlCache.setExpiresAt(LocalDateTime.now().plusHours(1));
+        }
+
+        signedUrlCacheRepository.save(urlCache);
+        logger.info("Created and cached new signed URL for file: {}", fileId);
+
+        return newSignedUrl;
     }
 
     // Helper methods
