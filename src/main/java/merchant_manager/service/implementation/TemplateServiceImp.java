@@ -2,10 +2,7 @@ package merchant_manager.service.implementation;
 
 import lombok.AllArgsConstructor;
 import merchant_manager.customExceptions.CustomExceptions;
-import merchant_manager.models.Menu;
-import merchant_manager.models.Template;
-import merchant_manager.models.TemplateDefault;
-import merchant_manager.models.User;
+import merchant_manager.models.*;
 import merchant_manager.models.enums.Role;
 import merchant_manager.repository.TemplateDefaultRepository;
 import merchant_manager.repository.TemplateRepository;
@@ -26,17 +23,27 @@ public class TemplateServiceImp implements TemplateService {
     private final TemplateDefaultRepository templateDefaultRepository;
 
     @Override
-    public void addDefaultTemplateToUser(User user) {
+    public void addDefaultTemplateToUser(User user, Company company) {
+        List<Menu> menus = menuSeviceImp.getMenus();
+//        if (user.getRole().equals(Role.ROLE_USER)) {
+//            for (Menu menu : menus) {
+//                Template template = new Template(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime(), ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime(), user.getUsername(), user.getUsername(), menu, user);
+//                templateRepository.save(template);
+//            }
+//        } else {
+            for (Menu menu : menus) {
+                TemplateDefault template = new TemplateDefault(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime(), ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime(), user.getUsername(), user.getUsername(), menu, user, company);
+                templateDefaultRepository.save(template);
+            }
+//        }
+    }
+
+    public void addTemplateToUser(User user) {
         List<Menu> menus = menuSeviceImp.getMenus();
         if (user.getRole().equals(Role.ROLE_USER)) {
             for (Menu menu : menus) {
                 Template template = new Template(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime(), ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime(), user.getUsername(), user.getUsername(), menu, user);
                 templateRepository.save(template);
-            }
-        } else {
-            for (Menu menu : menus) {
-                TemplateDefault template = new TemplateDefault(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime(), ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime(), user.getUsername(), user.getUsername(), menu, user);
-                templateDefaultRepository.save(template);
             }
         }
     }

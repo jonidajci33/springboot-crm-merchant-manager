@@ -126,7 +126,7 @@ public class UserServiceImp implements UserService {
 
     public User registerUserAndAddTemplates(RegisterRequest request){
         User user = register(request);
-        templateServiceImp.addDefaultTemplateToUser(user);
+        templateServiceImp.addTemplateToUser(user);
         return user;
     }
 

@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class DynamicRecordsRequestDTO {
     private Long menuId;
+    private Long companyId;
     private int page = 0;
     private int size = 10;
     private List<RecordFilterDTO> filters;

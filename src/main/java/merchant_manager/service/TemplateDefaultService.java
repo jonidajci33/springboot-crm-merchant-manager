@@ -4,6 +4,6 @@ import merchant_manager.models.TemplateDefault;
 
 public interface TemplateDefaultService {
 
-    TemplateDefault findByMenuId(Long menuId);
+    TemplateDefault findByMenuIdAndCompanyId(Long menuId, Long companyId);
 
 }
