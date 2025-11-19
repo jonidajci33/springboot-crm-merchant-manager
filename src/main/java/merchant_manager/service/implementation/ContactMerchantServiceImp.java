@@ -3,20 +3,22 @@ package merchant_manager.service.implementation;
 import lombok.AllArgsConstructor;
 import merchant_manager.customExceptions.CustomExceptions;
 import merchant_manager.dto.ContactMerchantRequest;
+import merchant_manager.dto.ContactMerchantWithDetailsDTO;
 import merchant_manager.models.Contact;
 import merchant_manager.models.ContactMerchant;
 import merchant_manager.models.Lead;
 import merchant_manager.models.Merchant;
+import merchant_manager.models.TemplateFormValueDefault;
 import merchant_manager.repository.ContactMerchantRepository;
 import merchant_manager.repository.ContactRepository;
 import merchant_manager.repository.LeadRepository;
 import merchant_manager.repository.MerchantRepository;
+import merchant_manager.repository.TemplateFormValueDefaultRepository;
 import merchant_manager.service.ContactMerchantService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -25,6 +27,8 @@ public class ContactMerchantServiceImp implements ContactMerchantService {
     private final ContactMerchantRepository contactMerchantRepository;
     private final ContactRepository contactRepository;
     private final MerchantRepository merchantRepository;
+    private final TemplateFormValueDefaultRepository templateFormValueDefaultRepository;
+    private final TemplateDefaultServiceImp templateServiceImp;
 
     @Override
     public ContactMerchant saveContactMerchant(ContactMerchant contactMerchant) {
@@ -75,5 +79,52 @@ public class ContactMerchantServiceImp implements ContactMerchantService {
     @Override
     public List<ContactMerchant> getContactMerchantsByMerchantId(Long merchantId) {
         return contactMerchantRepository.findByMerchantId(merchantId);
+    }
+
+
+    public List<ContactMerchantWithDetailsDTO> getContactMerchantsWithDetails(Long contactId) {
+        List<ContactMerchant> relationships = contactMerchantRepository.findByContactId(contactId);
+
+        if (relationships.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<Long> merchantIds = relationships.stream()
+                .map(rel -> rel.getMerchant().getId())
+                .collect(Collectors.toList());
+
+        Long merchantMenuId = 6L;
+        var template = templateServiceImp.findByMenuId(merchantMenuId);
+
+        List<TemplateFormValueDefault> values = templateFormValueDefaultRepository
+                .findByTemplateIdAndRecordIds(template.getId(), merchantIds);
+
+        Map<Long, Map<String, String>> merchantFieldsMap = values.stream()
+                .collect(Collectors.groupingBy(
+                        TemplateFormValueDefault::getRecordId,
+                        Collectors.toMap(
+                                v -> v.getTemplateFormDefault().getKey(),
+                                TemplateFormValueDefault::getValue,
+                                (v1, v2) -> v1 // In case of duplicates, keep first
+                        )
+                ));
+
+        // 6. Transform to DTOs
+        return relationships.stream()
+                .map(rel -> {
+                    Long merchantId = rel.getMerchant().getId();
+                    Map<String, String> merchantFields = merchantFieldsMap.getOrDefault(
+                            merchantId,
+                            Collections.emptyMap()
+                    );
+
+                    return new ContactMerchantWithDetailsDTO(
+                            rel.getId(),
+                            rel.getContact().getId(),
+                            merchantId,
+                            merchantFields
+                    );
+                })
+                .collect(Collectors.toList());
     }
 }
