@@ -15,7 +15,7 @@ import java.util.Map;
 @Table(name="esign_template")
 @AllArgsConstructor
 @NoArgsConstructor
-public class EsignTemplate {
+public class EsignTemplate extends BaseModel{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
