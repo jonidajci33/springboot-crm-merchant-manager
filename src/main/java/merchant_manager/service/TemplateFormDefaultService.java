@@ -13,7 +13,7 @@ public interface TemplateFormDefaultService {
      * @param menuId The Menu ID
      * @return List of column definitions ordered by priority
      */
-    List<TemplateFormDefault> getColumnsByMenuId(Long menuId);
+    List<TemplateFormDefault> getColumnsByMenuIdAndCompanyId(Long menuId, Long companyId);
 
     /**
      * Get column definition by key
@@ -23,7 +23,7 @@ public interface TemplateFormDefaultService {
      */
     TemplateFormDefault getByKey(String key);
 
-    List<TemplateFormDefault> addFieldToDefaultTemplate(Long menuId, List<TemplateFormDefault> templateForm);
+    List<TemplateFormDefault> addFieldToDefaultTemplate(Long menuId, Long companyId, List<TemplateFormDefault> templateForm);
 
     void removeFieldFromTemplate(List<String> key);
 

@@ -25,8 +25,8 @@ public class TemplateFormDefaultServiceImp implements TemplateFormDefaultService
     private final TemplateDefaultServiceImp templateServiceImp;
 
     @Override
-    public List<TemplateFormDefault> getColumnsByMenuId(Long menuId) {
-        TemplateDefault template = templateServiceImp.findByMenuId(menuId);
+    public List<TemplateFormDefault> getColumnsByMenuIdAndCompanyId(Long menuId, Long companyId) {
+        TemplateDefault template = templateServiceImp.findByMenuIdAndCompanyId(menuId, companyId);
         return templateFormDefaultRepository.findByTemplateId(template.getId());
     }
 
@@ -38,13 +38,19 @@ public class TemplateFormDefaultServiceImp implements TemplateFormDefaultService
     }
 
     @Override
-    public List<TemplateFormDefault> addFieldToDefaultTemplate(Long menuId, List<TemplateFormDefault> templateForm) {
+    public List<TemplateFormDefault> addFieldToDefaultTemplate(Long menuId, Long companyId, List<TemplateFormDefault> templateForm) {
         try {
             User user = userServiceImp.getLoggedUser();
+            boolean hasCompany = user.getCompanies()
+                    .stream()
+                    .anyMatch(c -> c.getId().equals(companyId));
+            if (!hasCompany) {
+                throw new CustomExceptions.UnauthorizedAccessException("This user does not have permission to view dynamic records");
+            }
             if(user.getRole().equals(Role.ROLE_SUPERUSER)){
                 List<TemplateFormDefault> formList = new ArrayList<>();
                 // Find the template by userId and menuId
-                TemplateDefault template = templateServiceImp.findByMenuId(menuId);
+                TemplateDefault template = templateServiceImp.findByMenuIdAndCompanyId(menuId, companyId);
 
                 for (TemplateFormDefault templateFormCurrent : templateForm) {
                     // Set the template to the form

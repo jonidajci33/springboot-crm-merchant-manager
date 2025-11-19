@@ -9,6 +9,6 @@ import java.util.Optional;
 @Repository
 public interface TemplateDefaultRepository extends JpaRepository<TemplateDefault, Long> {
 
-    Optional<TemplateDefault> findByMenuId(Long menuId);
+    Optional<TemplateDefault> findByMenuIdAndCompanyId(Long menuId,  Long companyId);
 
 }
