@@ -51,6 +51,12 @@ public class TemplateFormDefault extends BaseModel{
     @Column(columnDefinition = "jsonb")
     private Map<String, String> columnProps;
 
+    @Column(name = "search_customer")
+    private Boolean searchCustomer;
+
+    @Column(name = "search_merchant")
+    private Boolean searchMerchant;
+
     @PrePersist
     private void generateKey() {
         if (this.key == null || this.key.isEmpty()) {
