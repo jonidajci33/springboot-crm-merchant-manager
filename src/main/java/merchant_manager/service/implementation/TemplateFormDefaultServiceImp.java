@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import merchant_manager.customExceptions.CustomExceptions;
 import merchant_manager.models.*;
+import merchant_manager.models.DTO.ConfigDTO;
 import merchant_manager.models.enums.Role;
 import merchant_manager.repository.TemplateFormDefaultRepository;
 import merchant_manager.service.TemplateFormDefaultService;
@@ -29,6 +30,8 @@ public class TemplateFormDefaultServiceImp implements TemplateFormDefaultService
         TemplateDefault template = templateServiceImp.findByMenuId(menuId);
         return templateFormDefaultRepository.findByTemplateId(template.getId());
     }
+
+
 
     @Override
     public TemplateFormDefault getByKey(String key) {
@@ -92,5 +95,29 @@ public class TemplateFormDefaultServiceImp implements TemplateFormDefaultService
 
     public void removeByKey(String key) {
         templateFormDefaultRepository.deleteByKey(key);
+    }
+
+    @Override
+    public TemplateFormDefault findByTemplateIdAndSearchContact(Long templateId, Boolean searchCustomer) {
+        return templateFormDefaultRepository.findByTemplateIdAndSearchContact(templateId, true).orElseThrow(() -> new CustomExceptions.ResourceNotFoundException("Key for Search Customer not found with key: " + templateId));
+    }
+
+    @Override
+    public TemplateFormDefault findByTemplateIdAndSearchMerchant(Long templateId, Boolean searchMerchant) {
+        return templateFormDefaultRepository.findByTemplateIdAndSearchMerchant(templateId, true).orElseThrow(() -> new CustomExceptions.ResourceNotFoundException("Key for Search Merchant not found with key: " + templateId));
+    }
+
+    public ConfigDTO getConfig(Long customerMenuIds, Long merchantMenuId) {
+        TemplateDefault templateCustomer = templateServiceImp.findByMenuId(customerMenuIds);
+        TemplateDefault templateMerchant = templateServiceImp.findByMenuId(merchantMenuId);
+
+        TemplateFormDefault templateFormDefaultCustomer = findByTemplateIdAndSearchContact(templateCustomer.getId(), true);
+        TemplateFormDefault templateFormDefaultMerchant = findByTemplateIdAndSearchMerchant(templateMerchant.getId(), true);
+
+        ConfigDTO configDTO = new ConfigDTO();
+        configDTO.setContactSearch(templateFormDefaultCustomer.getKey());
+        configDTO.setMerchantSearch(templateFormDefaultMerchant.getKey());
+
+        return configDTO;
     }
 }

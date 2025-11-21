@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import merchant_manager.models.DTO.ConfigDTO;
 import merchant_manager.models.TemplateFormDefault;
 import merchant_manager.service.implementation.TemplateFormDefaultServiceImp;
 import org.springframework.http.HttpStatus;
@@ -115,4 +116,26 @@ public class TemplateFormDefaultController {
         templateFormDefaultService.removeFieldFromTemplate(keys);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/config/{customerMenuId}/{merchantMenuId}")
+    @Operation(
+            summary = "Get Config"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Columns successfully retrieved",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TemplateFormDefault.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "404", description = "Template not found")
+    })
+    public ResponseEntity<ConfigDTO> getConfig(
+            @Parameter(description = "Customer Menu ID", required = true)
+            @PathVariable Long customerMenuId,
+            @Parameter(description = "Merchant Menu ID", required = true)
+            @PathVariable Long merchantMenuId
+    ) {
+        ConfigDTO dto = templateFormDefaultService.getConfig(customerMenuId, merchantMenuId);
+        return ResponseEntity.ok(dto);
+    }
+
 }

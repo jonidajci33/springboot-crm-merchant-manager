@@ -28,4 +28,8 @@ public interface TemplateFormDefaultService {
     void removeFieldFromTemplate(List<String> key);
 
     void removeByKey(String key);
+
+    TemplateFormDefault findByTemplateIdAndSearchContact(Long templateId, Boolean searchCustomer);
+
+    TemplateFormDefault findByTemplateIdAndSearchMerchant(Long templateId, Boolean searchMerchant);
 }
