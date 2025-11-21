@@ -94,6 +94,11 @@ public class MerchantMilesServiceImp implements MerchantMilesService {
     }
 
     @Override
+    public List<MerchantMiles> getMerchantMilesByMerchantId(Long merchantId) {
+        return merchantMilesRepository.findByMerchantId(merchantId);
+    }
+
+    @Override
     public void deleteMerchantMiles(Long id) {
         merchantMilesRepository.deleteById(id);
     }

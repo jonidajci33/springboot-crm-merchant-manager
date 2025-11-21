@@ -40,6 +40,12 @@ public class MerchantMilesController {
         return ResponseEntity.ok(merchantMilesService.getAllMerchantMiles());
     }
 
+    @GetMapping("/merchant/{merchantId}")
+    @Operation(summary = "Get merchant miles by merchant ID", description = "Retrieve merchant miles record by merchant ID")
+    public ResponseEntity<List<MerchantMiles>> getMerchantMilesByMerchantId(@PathVariable Long merchantId) {
+        return ResponseEntity.ok(merchantMilesService.getMerchantMilesByMerchantId(merchantId));
+    }
+
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete merchant miles", description = "Delete a merchant miles record by ID")
     public ResponseEntity<Void> deleteMerchantMiles(@PathVariable Long id) {

@@ -13,6 +13,8 @@ public interface MerchantMilesService {
 
     List<MerchantMiles> getAllMerchantMiles();
 
+    List<MerchantMiles> getMerchantMilesByMerchantId(Long merchantId);
+
     void deleteMerchantMiles(Long id);
 
 }
