@@ -29,4 +29,6 @@ public class Merchant extends BaseModel{
     @OneToMany(mappedBy = "merchant", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<MerchantTpl> merchantTpls;
 
+    private Boolean joinedMiles;
+
 }

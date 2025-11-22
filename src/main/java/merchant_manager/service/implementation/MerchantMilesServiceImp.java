@@ -50,6 +50,8 @@ public class MerchantMilesServiceImp implements MerchantMilesService {
         Merchant merchant = merchantRepository.findById(request.getMerchantId())
                 .orElseThrow(() -> new RuntimeException("Merchant not found with id: " + request.getMerchantId()));
 
+        merchant.setJoinedMiles(true);
+
         // Fetch pointing system
         PointingSystem pointingSystem = pointingSystemRepository.findById(request.getPointingSystemId())
                 .orElseThrow(() -> new RuntimeException("PointingSystem not found with id: " + request.getPointingSystemId()));
@@ -91,6 +93,11 @@ public class MerchantMilesServiceImp implements MerchantMilesService {
     @Override
     public List<MerchantMiles> getAllMerchantMiles() {
         return merchantMilesRepository.findAll();
+    }
+
+    @Override
+    public List<MerchantMiles> getMerchantMilesByMerchantId(Long merchantId) {
+        return merchantMilesRepository.findByMerchantId(merchantId);
     }
 
     @Override
