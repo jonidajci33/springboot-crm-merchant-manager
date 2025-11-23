@@ -43,6 +43,16 @@ public class DocumentServiceImp implements DocumentService {
         Document savedDocument = null;
         User user = userServiceImp.getLoggedUser();
 
+        // Update audit fields for recipients
+        if (document.getRecipients() != null) {
+            document.getRecipients().forEach(recipient -> {
+                recipient.setCreatedBy(user.getUsername());
+                recipient.setUpdatedAt(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime());
+                recipient.setLastUpdatedBy(user.getUsername());
+                recipient.setDocument(document);
+            });
+        }
+
         if (document.getFileMetadata() != null) {
             if (document.getFileMetadata().getId() != null) {
                 FileMetadata fileMetadata = cloudStorageService.getFileMetadata(document.getFileMetadata().getId());

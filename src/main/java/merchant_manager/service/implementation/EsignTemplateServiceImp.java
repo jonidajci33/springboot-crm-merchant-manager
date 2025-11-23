@@ -43,8 +43,16 @@ public class EsignTemplateServiceImp implements EsignTemplateService {
             if (esignTemplate.getFileMetadata().getId() != null) {
                 FileMetadata fileMetadata = cloudStorageService.getFileMetadata(esignTemplate.getFileMetadata().getId());
                 if (fileMetadata.getOriginalFilename().equals(file.getOriginalFilename())) {
+                    esignTemplate.setCreatedBy(user.getUsername());
                     esignTemplate.setUpdatedAt(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime());
                     esignTemplate.setLastUpdatedBy(user.getUsername());
+                    savedEsignTemplate = save(esignTemplate);
+                }else{
+                    FileMetadata newFile = cloudStorageService.uploadFile(file);
+                    esignTemplate.setCreatedBy(user.getUsername());
+                    esignTemplate.setFileMetadata(newFile);
+                    esignTemplate.setLastUpdatedBy(user.getUsername());
+                    esignTemplate.setUpdatedAt(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime());
                     savedEsignTemplate = save(esignTemplate);
                 }
             }
