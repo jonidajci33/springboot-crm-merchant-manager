@@ -49,6 +49,16 @@ public class DocumentServiceImp implements DocumentService {
                 if (fileMetadata.getOriginalFilename().equals(file.getOriginalFilename())) {
                     document.setUpdatedAt(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime());
                     document.setLastUpdatedBy(user.getUsername());
+
+                    // Update audit fields for recipients
+                    if (document.getRecipients() != null) {
+                        document.getRecipients().forEach(recipient -> {
+                            recipient.setUpdatedAt(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime());
+                            recipient.setLastUpdatedBy(user.getUsername());
+                            recipient.setDocument(document);
+                        });
+                    }
+
                     savedDocument = save(document);
                 }
             }
@@ -59,6 +69,18 @@ public class DocumentServiceImp implements DocumentService {
             document.setCreatedBy(user.getUsername());
             document.setLastUpdatedBy(user.getUsername());
             document.setUpdatedAt(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime());
+
+            // Set audit fields for recipients
+            if (document.getRecipients() != null) {
+                document.getRecipients().forEach(recipient -> {
+                    recipient.setCreatedAt(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime());
+                    recipient.setCreatedBy(user.getUsername());
+                    recipient.setLastUpdatedBy(user.getUsername());
+                    recipient.setUpdatedAt(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime());
+                    recipient.setDocument(document);
+                });
+            }
+
             savedDocument = save(document);
         }
 
