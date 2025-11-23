@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import merchant_manager.models.enums.RecipientRole;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "recipient")
@@ -34,5 +36,9 @@ public class Recipient extends BaseModel {
     @ManyToOne
     @JoinColumn(name = "document_id", referencedColumnName = "id")
     private Document document;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "recipient_fields", columnDefinition = "jsonb")
+    private String recipientFields;
 
 }
