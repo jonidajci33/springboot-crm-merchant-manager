@@ -1,14 +1,16 @@
 package merchant_manager.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.vladmihalcea.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import merchant_manager.models.enums.DocumentStatus;
+import org.hibernate.annotations.Type;
 
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "document")
@@ -46,5 +48,10 @@ public class Document extends BaseModel {
     @ManyToOne
     @JoinColumn(name = "esign_template_id", referencedColumnName = "id")
     private EsignTemplate esignTemplate;
+
+
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
+    private Map<String, String> fields;
 
 }
