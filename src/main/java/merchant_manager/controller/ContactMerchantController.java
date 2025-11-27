@@ -2,6 +2,7 @@ package merchant_manager.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import merchant_manager.dto.ContactMerchantDetailsRequest;
 import merchant_manager.dto.ContactMerchantRequest;
 import merchant_manager.dto.ContactMerchantWithDetailsDTO;
 import merchant_manager.models.ContactMerchant;
@@ -47,12 +48,6 @@ public class ContactMerchantController {
         return ResponseEntity.ok(contactMerchantService.getContactMerchantsByLeadId(contactId));
     }
 
-//    @GetMapping("/contact/{contactId}/with-details")
-//    @Operation(summary = "Get merchants by contact with full details", description = "Retrieve all merchants associated with a specific contact, including dynamic field values")
-//    public ResponseEntity<List<ContactMerchantWithDetailsDTO>> getContactMerchantsWithDetails(@PathVariable Long contactId) {
-//        return ResponseEntity.ok(contactMerchantService.getContactMerchantsWithDetails(contactId));
-//    }
-
     @GetMapping("/merchant/{merchantId}")
     @Operation(summary = "Get contacts by merchant", description = "Retrieve all contacts associated with a specific merchant")
     public ResponseEntity<List<ContactMerchant>> getContactMerchantsByMerchantId(@PathVariable Long merchantId) {
@@ -64,5 +59,18 @@ public class ContactMerchantController {
     public ResponseEntity<Void> deleteContactMerchant(@PathVariable Long id) {
         contactMerchantService.deleteContactMerchant(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/details")
+    @Operation(
+            summary = "Get contact/merchant details with searchable fields",
+            description = "Retrieve contacts or merchants connected to a record with their searchable template field values. " +
+                         "If type is MERCHANT, returns all contacts for that merchant with searchContact=true fields. " +
+                         "If type is CONTACT, returns all merchants for that contact with searchMerchant=true fields."
+    )
+    public ResponseEntity<List<ContactMerchantWithDetailsDTO>> getContactMerchantWithDetails(
+            @RequestBody ContactMerchantDetailsRequest request) {
+        List<ContactMerchantWithDetailsDTO> details = contactMerchantService.getContactMerchantWithDetailsDTOById(request);
+        return ResponseEntity.ok(details);
     }
 }
