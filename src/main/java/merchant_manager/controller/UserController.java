@@ -28,6 +28,14 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    @PostMapping("/registerCompanyUser")
+    public ResponseEntity<User> registerCompanyUserAndAddTemplates(
+            @Valid @RequestBody RegisterRequest request
+    ) {
+        User user = userServiceImp.registerCompanyUserAndAddTemplates(request);
+        return ResponseEntity.ok(user);
+    }
+
     @GetMapping("/getLoggedUser")
     public ResponseEntity<User> getLoggedUser() {
         return ResponseEntity.ok(userServiceImp.getLoggedUser());

@@ -95,7 +95,7 @@ public class UserServiceImp implements UserService {
             user.setLastName(request.getLastname());
             user.setEmail(request.getEmail());
             user.setPhone(request.getPhone());
-            user.setRole(Role.ROLE_USER);
+            user.setRole(Role.ROLE_ADMIN);
             return save(user);
         }
         throw new CustomExceptions.CustomValidationException("Username already exists");
@@ -124,11 +124,37 @@ public class UserServiceImp implements UserService {
 //        emailService.sendEmail("joni.dajci12@gmail.com", "New Registration", emailBody);
     }
 
+    public User registerCompanyUser(RegisterRequest request) {
+
+        User user = new User();
+        try {
+            findByUsername(request.getUsername());
+        }catch (CustomExceptions.ResourceNotFoundException e){
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            user.setUsername(request.getUsername());
+            user.setAccountStatus(AccountStatus.ACTIVE);
+            user.setName(request.getFirstname());
+            user.setLastName(request.getLastname());
+            user.setEmail(request.getEmail());
+            user.setPhone(request.getPhone());
+            user.setRole(Role.ROLE_USER);
+            return save(user);
+        }
+        throw new CustomExceptions.CustomValidationException("Username already exists");
+    }
+
     public User registerUserAndAddTemplates(RegisterRequest request){
         User user = register(request);
-        templateServiceImp.addDefaultTemplateToUser(user);
+        templateServiceImp.addTemplateToUser(user);
         return user;
     }
+
+    public User registerCompanyUserAndAddTemplates(RegisterRequest request){
+        User user = registerCompanyUser(request);
+        templateServiceImp.addTemplateToUser(user);
+        return user;
+    }
+
 
     public User save(User user) {
         log.info("Saving user: Name " + user.getName() + " Role " + user.getRole());

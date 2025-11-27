@@ -9,6 +9,8 @@ public enum FieldType {
     CHECKBOX,
     RADIOBUTTON,
     NUMBER,
-    EMAIL
+    EMAIL,
+    DATETIME,
+    DATE
 }
 

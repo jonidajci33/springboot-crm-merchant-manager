@@ -1,6 +1,8 @@
 package merchant_manager.service.implementation;
 
 import lombok.RequiredArgsConstructor;
+import merchant_manager.customExceptions.CustomExceptions;
+import merchant_manager.models.*;
 import merchant_manager.models.DTO.*;
 import merchant_manager.models.Template;
 import merchant_manager.models.TemplateDefault;
@@ -27,7 +29,14 @@ public class DynamicRecordServiceImp implements DynamicRecordService {
 
     @Override
     public DynamicRecordsSimplePageDTO getDynamicRecordsSimple(DynamicRecordsRequestDTO request) {
-        TemplateDefault template = templateServiceImp.findByMenuId(request.getMenuId());
+        User user = userServiceImp.getLoggedUser();
+        boolean hasCompany = user.getCompanies()
+                .stream()
+                .anyMatch(c -> c.getId().equals(request.getCompanyId()));
+        if (!hasCompany) {
+            throw new CustomExceptions.UnauthorizedAccessException("This user does not have permission to view dynamic records");
+        }
+        TemplateDefault template = templateServiceImp.findByMenuIdAndCompanyId(request.getMenuId(), request.getCompanyId());
         // 1. Get all column definitions for the template (for transformation only)
         List<TemplateFormDefault> columns = templateFormDefaultRepository
                 .findByTemplateId(template.getId());

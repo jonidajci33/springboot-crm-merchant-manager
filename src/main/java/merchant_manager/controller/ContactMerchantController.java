@@ -47,11 +47,11 @@ public class ContactMerchantController {
         return ResponseEntity.ok(contactMerchantService.getContactMerchantsByLeadId(contactId));
     }
 
-    @GetMapping("/contact/{contactId}/with-details")
-    @Operation(summary = "Get merchants by contact with full details", description = "Retrieve all merchants associated with a specific contact, including dynamic field values")
-    public ResponseEntity<List<ContactMerchantWithDetailsDTO>> getContactMerchantsWithDetails(@PathVariable Long contactId) {
-        return ResponseEntity.ok(contactMerchantService.getContactMerchantsWithDetails(contactId));
-    }
+//    @GetMapping("/contact/{contactId}/with-details")
+//    @Operation(summary = "Get merchants by contact with full details", description = "Retrieve all merchants associated with a specific contact, including dynamic field values")
+//    public ResponseEntity<List<ContactMerchantWithDetailsDTO>> getContactMerchantsWithDetails(@PathVariable Long contactId) {
+//        return ResponseEntity.ok(contactMerchantService.getContactMerchantsWithDetails(contactId));
+//    }
 
     @GetMapping("/merchant/{merchantId}")
     @Operation(summary = "Get contacts by merchant", description = "Retrieve all contacts associated with a specific merchant")

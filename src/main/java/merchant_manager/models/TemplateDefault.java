@@ -23,13 +23,18 @@ public class TemplateDefault extends BaseModel{
     @JoinColumn(name = "user_id", nullable = false)  // foreign key column in template table
     private User user;
 
+    @OneToOne
+    @JoinColumn(name = "company_id", nullable = false)
+    private Company company;
+
     @ManyToOne
     @JoinColumn(name = "menu_id", nullable = false)  // foreign key column in template table
     private Menu menu;
 
-    public TemplateDefault(LocalDateTime createdAt, LocalDateTime updatedAt, String createdBy, String lastUpdatedBy, Menu menu, User user) {
+    public TemplateDefault(LocalDateTime createdAt, LocalDateTime updatedAt, String createdBy, String lastUpdatedBy, Menu menu, User user, Company company) {
         super(createdAt, updatedAt, createdBy, lastUpdatedBy);
         this.menu = menu;
         this.user = user;
+        this.company = company;
     }
 }

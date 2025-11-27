@@ -28,7 +28,7 @@ public class TemplateFormDefaultController {
 
     private final TemplateFormDefaultServiceImp templateFormDefaultService;
 
-    @GetMapping("/menu/{menuId}")
+    @GetMapping("/menu/{menuId}/{companyId}")
     @Operation(
             summary = "Get column definitions for template",
             description = "Retrieves all column definitions (table headers) for a specific template. " +
@@ -43,9 +43,11 @@ public class TemplateFormDefaultController {
     })
     public ResponseEntity<List<TemplateFormDefault>> getColumnsByMenuId(
             @Parameter(description = "Menu ID", required = true)
-            @PathVariable Long menuId
+            @PathVariable Long menuId,
+            @Parameter(description = "Company ID", required = true)
+            @PathVariable Long companyId
     ) {
-        List<TemplateFormDefault> columns = templateFormDefaultService.getColumnsByMenuId(menuId);
+        List<TemplateFormDefault> columns = templateFormDefaultService.getColumnsByMenuIdAndCompanyId(menuId, companyId);
         return ResponseEntity.ok(columns);
     }
 
@@ -88,10 +90,12 @@ public class TemplateFormDefaultController {
     public ResponseEntity<List<TemplateFormDefault>> addFieldToDefaultTemplate(
             @Parameter(description = "Menu ID for the default template", required = true)
             @RequestParam Long menuId,
+            @Parameter(description = "Company ID for the default template", required = true)
+            @RequestParam Long companyId,
             @Parameter(description = "List of column definitions to add to the default template", required = true)
             @Valid @RequestBody List<TemplateFormDefault> templateFormDefaults
     ) {
-        List<TemplateFormDefault> savedForms = templateFormDefaultService.addFieldToDefaultTemplate(menuId, templateFormDefaults);
+        List<TemplateFormDefault> savedForms = templateFormDefaultService.addFieldToDefaultTemplate(menuId, companyId,templateFormDefaults);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedForms);
     }
 
@@ -117,7 +121,7 @@ public class TemplateFormDefaultController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/config/{customerMenuId}/{merchantMenuId}")
+    @GetMapping("/config/{customerMenuId}/{merchantMenuId}/{companyId}")
     @Operation(
             summary = "Get Config"
     )
@@ -132,9 +136,11 @@ public class TemplateFormDefaultController {
             @Parameter(description = "Customer Menu ID", required = true)
             @PathVariable Long customerMenuId,
             @Parameter(description = "Merchant Menu ID", required = true)
-            @PathVariable Long merchantMenuId
+            @PathVariable Long merchantMenuId,
+            @Parameter(description = "Company ID", required = true)
+            @PathVariable Long companyId
     ) {
-        ConfigDTO dto = templateFormDefaultService.getConfig(customerMenuId, merchantMenuId);
+        ConfigDTO dto = templateFormDefaultService.getConfig(customerMenuId, merchantMenuId, companyId);
         return ResponseEntity.ok(dto);
     }
 

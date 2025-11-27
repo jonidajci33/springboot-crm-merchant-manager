@@ -2,6 +2,7 @@ package merchant_manager.service.implementation;
 
 import lombok.AllArgsConstructor;
 import merchant_manager.customExceptions.CustomExceptions;
+import merchant_manager.dto.ContactMerchantDetailsRequest;
 import merchant_manager.dto.ContactMerchantRequest;
 import merchant_manager.dto.ContactMerchantWithDetailsDTO;
 import merchant_manager.models.Contact;
@@ -81,50 +82,55 @@ public class ContactMerchantServiceImp implements ContactMerchantService {
         return contactMerchantRepository.findByMerchantId(merchantId);
     }
 
+    public ContactMerchantWithDetailsDTO getContactMerchantWithDetailsDTOById(ContactMerchantDetailsRequest contactMerchantDetailsRequest) {
 
-    public List<ContactMerchantWithDetailsDTO> getContactMerchantsWithDetails(Long contactId) {
-        List<ContactMerchant> relationships = contactMerchantRepository.findByContactId(contactId);
-
-        if (relationships.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        List<Long> merchantIds = relationships.stream()
-                .map(rel -> rel.getMerchant().getId())
-                .collect(Collectors.toList());
-
-        Long merchantMenuId = 6L;
-        var template = templateServiceImp.findByMenuId(merchantMenuId);
-
-        List<TemplateFormValueDefault> values = templateFormValueDefaultRepository
-                .findByTemplateIdAndRecordIds(template.getId(), merchantIds);
-
-        Map<Long, Map<String, String>> merchantFieldsMap = values.stream()
-                .collect(Collectors.groupingBy(
-                        TemplateFormValueDefault::getRecordId,
-                        Collectors.toMap(
-                                v -> v.getTemplateFormDefault().getKey(),
-                                TemplateFormValueDefault::getValue,
-                                (v1, v2) -> v1 // In case of duplicates, keep first
-                        )
-                ));
-
-        // 6. Transform to DTOs
-        return relationships.stream()
-                .map(rel -> {
-                    Long merchantId = rel.getMerchant().getId();
-                    Map<String, String> merchantFields = merchantFieldsMap.getOrDefault(
-                            merchantId,
-                            Collections.emptyMap()
-                    );
-
-                    return new ContactMerchantWithDetailsDTO(
-                            rel.getId(),
-                            rel.getContact().getId(),
-                            merchantId,
-                            merchantFields
-                    );
-                })
-                .collect(Collectors.toList());
     }
+
+
+
+//    public List<ContactMerchantWithDetailsDTO> getContactMerchantsWithDetails(Long contactId) {
+//        List<ContactMerchant> relationships = contactMerchantRepository.findByContactId(contactId);
+//
+//        if (relationships.isEmpty()) {
+//            return Collections.emptyList();
+//        }
+//
+//        List<Long> merchantIds = relationships.stream()
+//                .map(rel -> rel.getMerchant().getId())
+//                .collect(Collectors.toList());
+//
+//        Long merchantMenuId = 6L;
+//        var template = templateServiceImp.findByMenuId(merchantMenuId);
+//
+//        List<TemplateFormValueDefault> values = templateFormValueDefaultRepository
+//                .findByTemplateIdAndRecordIds(template.getId(), merchantIds);
+//
+//        Map<Long, Map<String, String>> merchantFieldsMap = values.stream()
+//                .collect(Collectors.groupingBy(
+//                        TemplateFormValueDefault::getRecordId,
+//                        Collectors.toMap(
+//                                v -> v.getTemplateFormDefault().getKey(),
+//                                TemplateFormValueDefault::getValue,
+//                                (v1, v2) -> v1 // In case of duplicates, keep first
+//                        )
+//                ));
+//
+//        // 6. Transform to DTOs
+//        return relationships.stream()
+//                .map(rel -> {
+//                    Long merchantId = rel.getMerchant().getId();
+//                    Map<String, String> merchantFields = merchantFieldsMap.getOrDefault(
+//                            merchantId,
+//                            Collections.emptyMap()
+//                    );
+//
+//                    return new ContactMerchantWithDetailsDTO(
+//                            rel.getId(),
+//                            rel.getContact().getId(),
+//                            merchantId,
+//                            merchantFields
+//                    );
+//                })
+//                .collect(Collectors.toList());
+//    }
 }

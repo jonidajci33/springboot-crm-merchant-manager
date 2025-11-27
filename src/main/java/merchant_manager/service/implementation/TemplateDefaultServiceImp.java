@@ -16,8 +16,8 @@ public class TemplateDefaultServiceImp implements TemplateDefaultService {
     }
 
     @Override
-    public TemplateDefault findByMenuId(Long menuId) {
-        return templateDefaultRepository.findByMenuId(menuId)
+    public TemplateDefault findByMenuIdAndCompanyId(Long menuId, Long companyId) {
+        return templateDefaultRepository.findByMenuIdAndCompanyId(menuId, companyId)
                 .orElseThrow(() -> new CustomExceptions.ResourceNotFoundException(
                         "Template Default not found for menu ID: " + menuId));
     }

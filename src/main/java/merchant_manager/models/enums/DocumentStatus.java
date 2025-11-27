@@ -6,6 +6,8 @@ public enum DocumentStatus {
 
     SENT,
 
-    COMPLETE
+    COMPLETE,
+
+    DECLINED
 
 }

@@ -11,8 +11,6 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ContactMerchantWithDetailsDTO {
-    private Long relationshipId;
-    private Long contactId;
-    private Long merchantId;
-    private Map<String, String> merchantFields;
+    private Long id;
+    private String field;
 }

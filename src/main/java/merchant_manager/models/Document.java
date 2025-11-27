@@ -44,6 +44,9 @@ public class Document extends BaseModel {
     @Column(name = "signed_nr")
     private Long signedNr;
 
+    @Column(name = "declined_nr")
+    private Long declinedNr;
+
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne
     @JoinColumn(name = "esign_template_id", referencedColumnName = "id")
