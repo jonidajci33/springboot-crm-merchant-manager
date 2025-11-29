@@ -14,6 +14,8 @@ import merchant_manager.service.DynamicRecordService;
 import merchant_manager.util.TemplateFormValueDefaultSpecification;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import merchant_manager.models.enums.Role;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,13 +30,28 @@ public class DynamicRecordServiceImp implements DynamicRecordService {
     private final UserServiceImp userServiceImp;
 
     @Override
+    @Transactional
     public DynamicRecordsSimplePageDTO getDynamicRecordsSimple(DynamicRecordsRequestDTO request) {
         User user = userServiceImp.getLoggedUser();
-        boolean hasCompany = user.getCompanies()
-                .stream()
-                .anyMatch(c -> c.getId().equals(request.getCompanyId()));
-        if (!hasCompany) {
-            throw new CustomExceptions.UnauthorizedAccessException("This user does not have permission to view dynamic records");
+
+        // SUPERUSER can access any company data
+        // ADMIN/other roles need company ownership check
+        if (!user.getRole().equals(Role.ROLE_SUPERUSER)) {
+            // Reload user with companies to avoid lazy loading issues
+            User managedUser = userServiceImp.findByIdWithCompanies(user.getId());
+
+            // Check if user has any companies
+            if (managedUser.getCompanies() == null || managedUser.getCompanies().isEmpty()) {
+                throw new CustomExceptions.UnauthorizedAccessException("User has no assigned companies");
+            }
+
+            // Check if user has access to this specific company
+            boolean hasCompany = managedUser.getCompanies()
+                    .stream()
+                    .anyMatch(c -> c.getId().equals(request.getCompanyId()));
+            if (!hasCompany) {
+                throw new CustomExceptions.UnauthorizedAccessException("This user does not have permission for company ID: " + request.getCompanyId());
+            }
         }
         TemplateDefault template = templateServiceImp.findByMenuIdAndCompanyId(request.getMenuId(), request.getCompanyId());
         // 1. Get all column definitions for the template (for transformation only)

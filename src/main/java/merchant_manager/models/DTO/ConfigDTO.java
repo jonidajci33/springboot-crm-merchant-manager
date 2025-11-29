@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class ConfigDTO {
     private String contactSearch;
     private String merchantSearch;
+    private String leadSearch;
 }

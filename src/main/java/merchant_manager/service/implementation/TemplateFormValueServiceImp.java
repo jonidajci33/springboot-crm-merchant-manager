@@ -33,7 +33,7 @@ public class TemplateFormValueServiceImp implements TemplateFormValueService {
             Long currentRecordId = recordId;
             if (recordId == null) {
                 switch ((int) menuId.longValue()) {
-                    case 4:
+                    case 2: // Lead
                         Lead lead = new Lead();
                         lead.setIsSigned(false);
                         lead.setIsActive(true);
@@ -44,7 +44,7 @@ public class TemplateFormValueServiceImp implements TemplateFormValueService {
                         lead = leadServiceImp.saveLead(lead);
                         currentRecordId = lead.getId();
                         break;
-                    case 5:
+                    case 3: // Contact
                         Contact contact = new Contact();
                         contact.setCreatedAt(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime());
                         contact.setUpdatedAt(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime());
@@ -53,7 +53,7 @@ public class TemplateFormValueServiceImp implements TemplateFormValueService {
                         contactServiceImp.save(contact);
                         currentRecordId = contact.getId();
                         break;
-                    case 6:
+                    case 4: // Merchant
                         Merchant merchant = new Merchant();
                         merchant.setCreatedAt(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime());
                         merchant.setUpdatedAt(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime());
@@ -62,13 +62,15 @@ public class TemplateFormValueServiceImp implements TemplateFormValueService {
                         merchantServiceImp.save(merchant);
                         currentRecordId = merchant.getId();
                         break;
+                    default:
+                        throw new CustomExceptions.CustomValidationException("Record creation not supported for menu ID: " + menuId + ". Please provide a recordId.");
                 }
             }
             for (AddValueRequest addValueRequest : addValueRequests) {
                 if(addValueRequest.getIsDefault()){
                     TemplateFormValueDefault templateFormValue;
                     try {
-                        templateFormValue = templateFormValueDefaultServiceImp.findByTemplateFormIdAndRecordId(templateFormDefaultServiceImp.getByKey(addValueRequest.getKey()).getId(), recordId);
+                        templateFormValue = templateFormValueDefaultServiceImp.findByTemplateFormIdAndRecordId(templateFormDefaultServiceImp.getByKey(addValueRequest.getKey()).getId(), currentRecordId);
                     } catch (CustomExceptions.ResourceNotFoundException e) {
                         templateFormValue = new TemplateFormValueDefault();
                         templateFormValue.setTemplateFormDefault(templateFormDefaultServiceImp.getByKey(addValueRequest.getKey()));
@@ -84,7 +86,7 @@ public class TemplateFormValueServiceImp implements TemplateFormValueService {
                 }else {
                     TemplateFormValue templateFormValue;
                     try {
-                        templateFormValue = findByTemplateFormIdAndRecordId(templateFormServiceImp.findByKey(addValueRequest.getKey()).getId(), recordId);
+                        templateFormValue = findByTemplateFormIdAndRecordId(templateFormServiceImp.findByKey(addValueRequest.getKey()).getId(), currentRecordId);
                     } catch (CustomExceptions.ResourceNotFoundException e) {
                         templateFormValue = new TemplateFormValue();
                         templateFormValue.setTemplateForm(templateFormServiceImp.findByKey(addValueRequest.getKey()));

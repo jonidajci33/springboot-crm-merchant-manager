@@ -52,6 +52,13 @@ public class UserServiceImp implements UserService {
         return userRepository.findById(id).orElseThrow(() -> new CustomExceptions.ResourceNotFoundException("User not found"));
     }
 
+    public User findByIdWithCompanies(Long id){
+        User user = userRepository.findById(id).orElseThrow(() -> new CustomExceptions.ResourceNotFoundException("User not found"));
+        // Trigger lazy loading within transaction
+        user.getCompanies().size();
+        return user;
+    }
+
     public User getLoggedUser() {
         User user = null;
         try {

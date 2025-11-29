@@ -39,35 +39,54 @@ public class TemplateFormDefaultServiceImp implements TemplateFormDefaultService
     }
 
     @Override
+    @Transactional
     public List<TemplateFormDefault> addFieldToDefaultTemplate(Long menuId, Long companyId, List<TemplateFormDefault> templateForm) {
         try {
             User user = userServiceImp.getLoggedUser();
-            boolean hasCompany = user.getCompanies()
-                    .stream()
-                    .anyMatch(c -> c.getId().equals(companyId));
-            if (!hasCompany) {
-                throw new CustomExceptions.UnauthorizedAccessException("This user does not have permission to view dynamic records");
-            }
-            if(user.getRole().equals(Role.ROLE_SUPERUSER)){
-                List<TemplateFormDefault> formList = new ArrayList<>();
-                // Find the template by userId and menuId
-                TemplateDefault template = templateServiceImp.findByMenuIdAndCompanyId(menuId, companyId);
 
-                for (TemplateFormDefault templateFormCurrent : templateForm) {
-                    // Set the template to the form
-                    templateFormCurrent.setTemplate(template);
-                    // Set audit fields
-                    templateFormCurrent.setCreatedAt(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime());
-                    templateFormCurrent.setUpdatedAt(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime());
-                    templateFormCurrent.setCreatedBy(template.getUser().getUsername());
-                    templateFormCurrent.setLastUpdatedBy(template.getUser().getUsername());
-                    // Save and return
-                    formList.add(templateFormDefaultRepository.save(templateFormCurrent));
-                }
-                return formList;
-            }else{
-                throw new CustomExceptions.CustomValidationException("User is not a member of this role");
+            log.info("User role: {}, User ID: {}, Company ID: {}", user.getRole(), user.getId(), companyId);
+
+            // Check if user is super admin or admin - both can manage default fields
+            if (!user.getRole().equals(Role.ROLE_SUPERUSER) && !user.getRole().equals(Role.ROLE_ADMIN)) {
+                throw new CustomExceptions.CustomValidationException("User is not a member of this role. Current role: " + user.getRole());
             }
+
+            // SUPERUSER can access any company
+            // ADMIN needs to have the company in their companies list
+            if (user.getRole().equals(Role.ROLE_ADMIN)) {
+                // Reload user with companies to avoid lazy loading issues
+                User managedUser = userServiceImp.findByIdWithCompanies(user.getId());
+
+                // Check if user has any companies
+                if (managedUser.getCompanies() == null || managedUser.getCompanies().isEmpty()) {
+                    throw new CustomExceptions.UnauthorizedAccessException("User has no assigned companies");
+                }
+
+                // Check if user has access to this specific company
+                boolean hasCompany = managedUser.getCompanies()
+                        .stream()
+                        .anyMatch(c -> c.getId().equals(companyId));
+                if (!hasCompany) {
+                    throw new CustomExceptions.UnauthorizedAccessException("This user does not have permission to access company ID: " + companyId);
+                }
+            }
+            // SUPERUSER doesn't need company check - they can access any company
+            List<TemplateFormDefault> formList = new ArrayList<>();
+            // Find the template by userId and menuId
+            TemplateDefault template = templateServiceImp.findByMenuIdAndCompanyId(menuId, companyId);
+
+            for (TemplateFormDefault templateFormCurrent : templateForm) {
+                // Set the template to the form
+                templateFormCurrent.setTemplate(template);
+                // Set audit fields
+                templateFormCurrent.setCreatedAt(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime());
+                templateFormCurrent.setUpdatedAt(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime());
+                templateFormCurrent.setCreatedBy(template.getUser().getUsername());
+                templateFormCurrent.setLastUpdatedBy(template.getUser().getUsername());
+                // Save and return
+                formList.add(templateFormDefaultRepository.save(templateFormCurrent));
+            }
+            return formList;
         } catch (CustomExceptions.ResourceNotFoundException e) {
             throw e;
         } catch (Exception e) {
@@ -103,24 +122,36 @@ public class TemplateFormDefaultServiceImp implements TemplateFormDefaultService
 
     @Override
     public TemplateFormDefault findByTemplateIdAndSearchContact(Long templateId, Boolean searchCustomer) {
-        return templateFormDefaultRepository.findByTemplateIdAndSearchContact(templateId, true).orElseThrow(() -> new CustomExceptions.ResourceNotFoundException("Key for Search Customer not found with key: " + templateId));
+        return templateFormDefaultRepository.findByTemplateIdAndSearchContact(templateId, true).orElse(null);
     }
 
     @Override
     public TemplateFormDefault findByTemplateIdAndSearchMerchant(Long templateId, Boolean searchMerchant) {
-        return templateFormDefaultRepository.findByTemplateIdAndSearchMerchant(templateId, true).orElseThrow(() -> new CustomExceptions.ResourceNotFoundException("Key for Search Merchant not found with key: " + templateId));
+        return templateFormDefaultRepository.findByTemplateIdAndSearchMerchant(templateId, true).orElse(null);
     }
 
-    public ConfigDTO getConfig(Long customerMenuIds, Long merchantMenuId, Long companyId) {
-        TemplateDefault templateCustomer = templateServiceImp.findByMenuIdAndCompanyId(customerMenuIds, companyId);
-        TemplateDefault templateMerchant = templateServiceImp.findByMenuIdAndCompanyId(merchantMenuId, companyId);
+    @Override
+    public TemplateFormDefault findByTemplateIdAndSearchLead(Long templateId, Boolean searchLead) {
+        return templateFormDefaultRepository.findByTemplateIdAndSearchLead(templateId, true).orElse(null);
+    }
 
-        TemplateFormDefault templateFormDefaultCustomer = findByTemplateIdAndSearchContact(templateCustomer.getId(), true);
+    public ConfigDTO getConfig(Long companyId) {
+        final Long CONTACT_MENU_ID = 3L;
+        final Long MERCHANT_MENU_ID = 4L;
+        final Long LEAD_MENU_ID = 2L;
+
+        TemplateDefault templateContact = templateServiceImp.findByMenuIdAndCompanyId(CONTACT_MENU_ID, companyId);
+        TemplateDefault templateMerchant = templateServiceImp.findByMenuIdAndCompanyId(MERCHANT_MENU_ID, companyId);
+        TemplateDefault templateLead = templateServiceImp.findByMenuIdAndCompanyId(LEAD_MENU_ID, companyId);
+
+        TemplateFormDefault templateFormDefaultContact = findByTemplateIdAndSearchContact(templateContact.getId(), true);
         TemplateFormDefault templateFormDefaultMerchant = findByTemplateIdAndSearchMerchant(templateMerchant.getId(), true);
+        TemplateFormDefault templateFormDefaultLead = findByTemplateIdAndSearchLead(templateLead.getId(), true);
 
         ConfigDTO configDTO = new ConfigDTO();
-        configDTO.setContactSearch(templateFormDefaultCustomer.getKey());
-        configDTO.setMerchantSearch(templateFormDefaultMerchant.getKey());
+        configDTO.setContactSearch(templateFormDefaultContact != null ? templateFormDefaultContact.getKey() : null);
+        configDTO.setMerchantSearch(templateFormDefaultMerchant != null ? templateFormDefaultMerchant.getKey() : null);
+        configDTO.setLeadSearch(templateFormDefaultLead != null ? templateFormDefaultLead.getKey() : null);
 
         return configDTO;
     }

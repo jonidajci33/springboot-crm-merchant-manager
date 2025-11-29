@@ -121,26 +121,22 @@ public class TemplateFormDefaultController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/config/{customerMenuId}/{merchantMenuId}/{companyId}")
+    @GetMapping("/config")
     @Operation(
-            summary = "Get Config"
+            summary = "Get Template Config for Contact, Merchant, and Lead search fields"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Columns successfully retrieved",
+            @ApiResponse(responseCode = "200", description = "Config successfully retrieved",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = TemplateFormDefault.class))),
+                            schema = @Schema(implementation = ConfigDTO.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "404", description = "Template not found")
     })
     public ResponseEntity<ConfigDTO> getConfig(
-            @Parameter(description = "Customer Menu ID", required = true)
-            @PathVariable Long customerMenuId,
-            @Parameter(description = "Merchant Menu ID", required = true)
-            @PathVariable Long merchantMenuId,
             @Parameter(description = "Company ID", required = true)
-            @PathVariable Long companyId
+            @RequestParam Long companyId
     ) {
-        ConfigDTO dto = templateFormDefaultService.getConfig(customerMenuId, merchantMenuId, companyId);
+        ConfigDTO dto = templateFormDefaultService.getConfig(companyId);
         return ResponseEntity.ok(dto);
     }
 
