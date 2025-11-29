@@ -5,6 +5,7 @@ import merchant_manager.auth.RegisterRequest;
 import merchant_manager.auth.SetPassUsernameRequest;
 import merchant_manager.customExceptions.CustomExceptions;
 import merchant_manager.emailService.EmailService;
+import merchant_manager.models.Company;
 import merchant_manager.models.User;
 import merchant_manager.models.enums.AccountStatus;
 import merchant_manager.models.enums.Role;
@@ -15,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -124,9 +126,11 @@ public class UserServiceImp implements UserService {
 //        emailService.sendEmail("joni.dajci12@gmail.com", "New Registration", emailBody);
     }
 
-    public User registerCompanyUser(RegisterRequest request) {
+    public User registerCompanyUser(RegisterRequest request, Company company) {
 
         User user = new User();
+        List<Company> companyList = new ArrayList<>();
+        companyList.add(company);
         try {
             findByUsername(request.getUsername());
         }catch (CustomExceptions.ResourceNotFoundException e){
@@ -138,6 +142,7 @@ public class UserServiceImp implements UserService {
             user.setEmail(request.getEmail());
             user.setPhone(request.getPhone());
             user.setRole(Role.ROLE_USER);
+            user.setCompanies(companyList);
             return save(user);
         }
         throw new CustomExceptions.CustomValidationException("Username already exists");
@@ -149,8 +154,8 @@ public class UserServiceImp implements UserService {
         return user;
     }
 
-    public User registerCompanyUserAndAddTemplates(RegisterRequest request){
-        User user = registerCompanyUser(request);
+    public User registerCompanyUserAndAddTemplates(RegisterRequest request, Company company){
+        User user = registerCompanyUser(request, company);
         templateServiceImp.addTemplateToUser(user);
         return user;
     }

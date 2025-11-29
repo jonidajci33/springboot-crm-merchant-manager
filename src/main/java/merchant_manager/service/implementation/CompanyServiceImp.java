@@ -1,6 +1,7 @@
 package merchant_manager.service.implementation;
 
 import lombok.extern.slf4j.Slf4j;
+import merchant_manager.auth.RegisterRequest;
 import merchant_manager.customExceptions.CustomExceptions;
 import merchant_manager.models.Company;
 import merchant_manager.models.User;
@@ -17,13 +18,13 @@ import java.util.List;
 public class CompanyServiceImp implements CompanyService {
 
     private final CompanyRepository companyRepository;
+    private final TemplateServiceImp templateServiceImp;
     private final UserServiceImp userServiceImp;
-    private final TemplateServiceImp  templateServiceImp;
 
-    public CompanyServiceImp(CompanyRepository companyRepository, UserServiceImp userServiceImp, TemplateServiceImp templateServiceImp) {
+    public CompanyServiceImp(CompanyRepository companyRepository, TemplateServiceImp templateServiceImp, UserServiceImp userServiceImp) {
         this.companyRepository = companyRepository;
-        this.userServiceImp = userServiceImp;
         this.templateServiceImp = templateServiceImp;
+        this.userServiceImp = userServiceImp;
     }
 
     @Override
@@ -116,5 +117,21 @@ public class CompanyServiceImp implements CompanyService {
 
     private User getCurrentUser() {
         return userServiceImp.getLoggedUser();
+    }
+
+    public User registerCompanyUserWithTemplates(RegisterRequest request, Long companyId) {
+        try {
+            // Get company through this service (follows architecture rules)
+            Company company = getCompanyById(companyId);
+
+            // Call UserService to register user with the company object
+            User user = userServiceImp.registerCompanyUserAndAddTemplates(request, company);
+
+            log.info("Successfully registered company user: {} for company: {}", user.getUsername(), company.getName());
+            return user;
+        } catch (Exception e) {
+            log.error("Error registering company user: {}", e.getMessage(), e);
+            throw e;
+        }
     }
 }

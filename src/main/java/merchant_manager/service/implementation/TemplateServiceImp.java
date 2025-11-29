@@ -34,11 +34,9 @@ public class TemplateServiceImp implements TemplateService {
 
     public void addTemplateToUser(User user) {
         List<Menu> menus = menuSeviceImp.getMenus();
-        if (user.getRole().equals(Role.ROLE_USER)) {
-            for (Menu menu : menus) {
-                Template template = new Template(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime(), ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime(), user.getUsername(), user.getUsername(), menu, user);
-                templateRepository.save(template);
-            }
+        for (Menu menu : menus) {
+            Template template = new Template(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime(), ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime(), user.getUsername(), user.getUsername(), menu, user);
+            templateRepository.save(template);
         }
     }
 
