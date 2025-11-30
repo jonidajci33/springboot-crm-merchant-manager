@@ -66,9 +66,9 @@ public class DocumentController {
     @PostMapping(value = "/sign", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Sign or decline a document", description = "Sign or decline a document using recipient token. If signing, upload the signed file. If declining, file is optional.")
     public ResponseEntity<Document> signDocument(
-            @RequestPart("token") String token,
-            @RequestPart("status") RecipientStatus status,
-            @RequestPart("file") MultipartFile file) {
+            @RequestParam("token") String token,
+            @RequestParam("status") RecipientStatus status,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
 
         Document updatedDocument = documentService.signDocument(token, status, file);
         return ResponseEntity.ok(updatedDocument);
