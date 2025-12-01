@@ -1,8 +1,10 @@
-FROM maven:3.8.5-openjdk-17 as build
+FROM maven:3.9-eclipse-temurin-21 as build
+WORKDIR /app
 COPY . .
 RUN mvn clean package -DskipTests
 
-FROM openjdk:17.0.1-jdk-slim
-COPY --from=build /target/aegis_broker-0.0.1-SNAPSHOT.jar merchant_manager.jar
+FROM eclipse-temurin:21-jre-jammy
+WORKDIR /app
+COPY --from=build /app/target/merchant_manager-0.0.1-SNAPSHOT.war merchant_manager.war
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "merchant_manager.jar"]
+ENTRYPOINT ["java", "-jar", "merchant_manager.war"]
