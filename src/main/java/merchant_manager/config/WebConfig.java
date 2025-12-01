@@ -10,13 +10,17 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins(
-                        "https://*.vercel.app",
-                        "http://localhost:3000",  // React dev server
-                        "http://localhost:3001"   // Alternative port
+                .allowedOriginPatterns(
+                        "https://*.vercel.app",      // All Vercel deployments
+                        "http://localhost:3000",     // React dev server
+                        "http://localhost:3001",     // Alternative port
+                        "https://*.railway.app",     // Railway deployments
+                        "http://localhost:*"         // Any localhost port
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                 .allowedHeaders("*")
-                .allowCredentials(true);  // Set to true to allow credentials (cookies, authorization headers)
+                .exposedHeaders("Authorization", "Content-Type")
+                .allowCredentials(true)
+                .maxAge(3600);  // Cache preflight for 1 hour
     }
 }
