@@ -11,8 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins(
-                        "https://aegisbroker.com",
-                        "https://api.aegisbroker.com",
+                        "https://*.vercel.app",
                         "http://localhost:3000",  // React dev server
                         "http://localhost:3001"   // Alternative port
                 )
