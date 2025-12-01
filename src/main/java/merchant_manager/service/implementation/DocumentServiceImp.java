@@ -153,8 +153,8 @@ public class DocumentServiceImp implements DocumentService {
             Long currentDeclined = document.getDeclinedNr() != null ? document.getDeclinedNr() : 0L;
             document.setDeclinedNr(currentDeclined + 1);
 
-            // Set document status to DECLINED
-            document.setStatus(DocumentStatus.DECLINED);
+            // Keep document status as SENT (do not change to DECLINED)
+            // Only the recipient status changes to DECLINED
         }
 
         // Update document audit fields
