@@ -7,4 +7,8 @@ import java.util.List;
 public interface UserService {
 
     List<User> getPendingUser();
+
+    List<User> getUsersByCompany(Long companyId);
+
+    List<User> getUsersByCompanyWithAuthorization(Long companyId);
 }

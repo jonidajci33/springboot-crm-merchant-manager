@@ -55,4 +55,16 @@ public class UserController {
         return ResponseEntity.ok(userServiceImp.getLoggedUser());
     }
 
+    @GetMapping("/company/{companyId}/users")
+    @Operation(
+            summary = "Get users by company",
+            description = "Retrieve all users associated with a specific company. " +
+                         "Users can only access companies they belong to. " +
+                         "SUPERUSER can access any company."
+    )
+    public ResponseEntity<List<User>> getUsersByCompany(@PathVariable Long companyId) {
+        List<User> users = userServiceImp.getUsersByCompanyWithAuthorization(companyId);
+        return ResponseEntity.ok(users);
+    }
+
 }

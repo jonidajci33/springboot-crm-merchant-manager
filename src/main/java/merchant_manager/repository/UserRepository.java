@@ -3,6 +3,7 @@ package merchant_manager.repository;
 import merchant_manager.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,4 +17,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
             select u from User u where u.accountStatus = "PENDING"
             """)
     List<User> findByAccountStatus();
+
+    @Query(value = """
+            SELECT DISTINCT u FROM User u
+            JOIN u.companies c
+            WHERE c.id = :companyId
+            """)
+    List<User> findUsersByCompanyId(@Param("companyId") Long companyId);
 }

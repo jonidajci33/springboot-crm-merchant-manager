@@ -21,16 +21,9 @@ public class RegisterRequest {
     @Pattern(regexp = "^[a-zA-Z0-9 ]*$", message = "Lastname must not contain special characters")
     private String lastname;
 
-    @NotBlank(message = "Company name is required")
-    @Pattern(regexp = "^[a-zA-Z0-9 ]*$", message = "Company name must not contain special characters")
-    private String companyName;
-
     @NotBlank(message = "Phone number is required")
     @Pattern(regexp = "\\d{10}", message = "Phone number must be 10 digits")
     private String phone;
-
-    @Pattern(regexp = "^[a-zA-Z0-9 ]*$", message = "Job title must not contain special characters")
-    private String jobTitle;
 
     @NotBlank(message = "Email is required")
     @Email(message = "Email should be valid")
@@ -49,5 +42,7 @@ public class RegisterRequest {
             "At least one special character (e.g., !@#$%^&*()_+)\n" +
             "Minimum length of 8 characters")
     private String password;
+
+    private Role role;
 
 }

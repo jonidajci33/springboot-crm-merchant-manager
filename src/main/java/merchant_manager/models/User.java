@@ -26,8 +26,6 @@ public class User implements UserDetails {
     @JsonIgnore
     private String password;
     private String phone;
-    private String companyName;
-    private String jobTitle;
     @Enumerated(EnumType.STRING)
     private AccountStatus accountStatus;
     @Enumerated(EnumType.STRING)
@@ -118,22 +116,6 @@ public class User implements UserDetails {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
-
-    public String getJobTitle() {
-        return jobTitle;
-    }
-
-    public void setJobTitle(String jobTitle) {
-        this.jobTitle = jobTitle;
     }
 
     public AccountStatus getAccountStatus() {

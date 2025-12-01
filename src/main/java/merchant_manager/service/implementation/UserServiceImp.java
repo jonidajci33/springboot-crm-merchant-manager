@@ -173,4 +173,48 @@ public class UserServiceImp implements UserService {
         return userRepository.save(user);
     }
 
+    @Override
+    public List<User> getUsersByCompany(Long companyId) {
+        try {
+            log.info("Fetching users for company ID: {}", companyId);
+            List<User> users = userRepository.findUsersByCompanyId(companyId);
+            log.info("Found {} users for company ID: {}", users.size(), companyId);
+            return users;
+        } catch (Exception e) {
+            log.error("Error fetching users for company ID: {}", companyId, e);
+            throw new CustomExceptions.CustomValidationException("Failed to fetch users for company: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public List<User> getUsersByCompanyWithAuthorization(Long companyId) {
+        User loggedUser = getLoggedUser();
+
+        // SUPERUSER can access any company's users
+        if (loggedUser.getRole() == Role.ROLE_SUPERUSER) {
+            log.info("SUPERUSER accessing users for company ID: {}", companyId);
+            return getUsersByCompany(companyId);
+        }
+
+        // All other users can only access their own company's users
+        log.info("User {} attempting to access users for company ID: {}", loggedUser.getId(), companyId);
+
+        // Load user with companies to check authorization
+        User userWithCompanies = findByIdWithCompanies(loggedUser.getId());
+
+        // Check if the user belongs to this company
+        boolean belongsToCompany = userWithCompanies.getCompanies().stream()
+                .anyMatch(company -> company.getId().equals(companyId));
+
+        if (!belongsToCompany) {
+            log.warn("User {} is not authorized to access company ID: {}", loggedUser.getId(), companyId);
+            throw new CustomExceptions.UnauthorizedAccessException(
+                    "You are not authorized to access users from this company"
+            );
+        }
+
+        log.info("User {} authorized to access users for company ID: {}", loggedUser.getId(), companyId);
+        return getUsersByCompany(companyId);
+    }
+
 }
