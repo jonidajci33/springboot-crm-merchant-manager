@@ -18,6 +18,10 @@ public interface TemplateFormDefaultRepository extends JpaRepository<TemplateFor
 
     Optional<TemplateFormDefault> findByKey(String key);
 
+    Optional<TemplateFormDefault> findByTemplateIdAndSearchContact(Long templateId, Boolean searchCustomer);
+
+    Optional<TemplateFormDefault> findByTemplateIdAndSearchMerchant(Long templateId, Boolean searchMerchant);
+
 //    @Query("SELECT tfd FROM TemplateFormDefault tfd WHERE tfd.template.id = :templateId")
 //    List<TemplateFormDefault> findAllByTemplateId(@Param("templateId") Long templateId);
 

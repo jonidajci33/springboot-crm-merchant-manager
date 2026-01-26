@@ -15,7 +15,7 @@ import java.util.Map;
 @Table(name="esign_template")
 @AllArgsConstructor
 @NoArgsConstructor
-public class EsignTemplate {
+public class EsignTemplate extends BaseModel{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,4 +34,8 @@ public class EsignTemplate {
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
     private Map<String, String> fields;
+
+    @Type(JsonType.class)
+    @Column(name = "base_fields", columnDefinition = "jsonb")
+    private Map<String, String> baseFields;
 }

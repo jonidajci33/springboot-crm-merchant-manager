@@ -24,7 +24,7 @@ public class UserController {
     public ResponseEntity<User> register(
             @Valid @RequestBody RegisterRequest request
     ) {
-        User user = userServiceImp.registerUserAndAddTemplates(request);
+        User user = userServiceImp.register(request);
         return ResponseEntity.ok(user);
     }
 

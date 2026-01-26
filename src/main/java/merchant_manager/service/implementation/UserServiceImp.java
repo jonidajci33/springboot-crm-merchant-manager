@@ -124,11 +124,11 @@ public class UserServiceImp implements UserService {
 //        emailService.sendEmail("joni.dajci12@gmail.com", "New Registration", emailBody);
     }
 
-    public User registerUserAndAddTemplates(RegisterRequest request){
-        User user = register(request);
-        templateServiceImp.addTemplateToUser(user);
-        return user;
-    }
+//    public User registerUserAndAddTemplates(RegisterRequest request){
+//        User user = register(request);
+//        templateServiceImp.addTemplateToUser(user);
+//        return user;
+//    }
 
     public User save(User user) {
         log.info("Saving user: Name " + user.getName() + " Role " + user.getRole());
