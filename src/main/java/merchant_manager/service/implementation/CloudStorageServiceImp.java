@@ -67,7 +67,7 @@ public class CloudStorageServiceImp implements CloudStorageService {
     }
 
     @Override
-    public FileMetadata uploadFile(MultipartFile file) {
+    public FileMetadata uploadFile(MultipartFile file, Boolean skipUser) {
         // Validate file
         if (file.isEmpty()) {
             throw new RuntimeException("Cannot upload empty file");
@@ -76,10 +76,6 @@ public class CloudStorageServiceImp implements CloudStorageService {
         if (file.getSize() > storageProperties.getMaxFileSize()) {
             throw new RuntimeException("File size exceeds maximum allowed size");
         }
-
-        // Get current user
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser = authentication != null ? (User) authentication.getPrincipal() : null;
 
         try {
             // Generate unique filename
@@ -121,7 +117,11 @@ public class CloudStorageServiceImp implements CloudStorageService {
             metadata.setCloudProvider(storageProperties.getProvider());
             metadata.setBucketName(storageProperties.getBucketName());
             metadata.setFileUrl(fileUrl);
-            metadata.setUploadedBy(currentUser);
+            if(!skipUser) {
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                User currentUser = authentication != null ? (User) authentication.getPrincipal() : null;
+                metadata.setUploadedBy(currentUser);
+            }
             return fileMetadataRepository.save(metadata);
 
         } catch (Exception e) {

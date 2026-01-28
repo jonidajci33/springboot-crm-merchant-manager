@@ -70,7 +70,7 @@ public class DocumentServiceImp implements DocumentService {
                     document.setLastUpdatedBy(user.getUsername());
                     savedDocument = save(document);
                 }else{
-                    FileMetadata newFile = cloudStorageService.uploadFile(file);
+                    FileMetadata newFile = cloudStorageService.uploadFile(file, false);
                     document.setCreatedBy(user.getUsername());
                     document.setFileMetadata(newFile);
                     document.setLastUpdatedBy(user.getUsername());
@@ -79,7 +79,7 @@ public class DocumentServiceImp implements DocumentService {
                 }
             }
         } else {
-            FileMetadata newFile = cloudStorageService.uploadFile(file);
+            FileMetadata newFile = cloudStorageService.uploadFile(file, false);
             document.setFileMetadata(newFile);
             document.setCreatedAt(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime());
             document.setCreatedBy(user.getUsername());
@@ -130,7 +130,7 @@ public class DocumentServiceImp implements DocumentService {
             recipient.setUpdatedAt(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime());
 
             // Replace the document file with the new signed file
-            FileMetadata newFile = cloudStorageService.uploadFile(file);
+            FileMetadata newFile = cloudStorageService.uploadFile(file, true);
             document.setFileMetadata(newFile);
 
             // Increment signedNr

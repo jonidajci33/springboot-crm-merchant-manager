@@ -2,6 +2,7 @@ package merchant_manager.service.implementation;
 
 import lombok.AllArgsConstructor;
 import merchant_manager.customExceptions.CustomExceptions;
+import merchant_manager.dto.ContactMerchantDetailsRequest;
 import merchant_manager.dto.ContactMerchantRequest;
 import merchant_manager.dto.ContactMerchantWithDetailsDTO;
 import merchant_manager.models.Contact;

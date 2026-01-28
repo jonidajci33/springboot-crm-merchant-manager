@@ -33,7 +33,8 @@ public class SecurityConfiguration {
             "/swagger-ui/**",
             "/swagger-ui.html",
             "/api/documents/sign",
-            "/api/documents/recipient/**"  // Allow public document retrieval for testing
+            "/api/documents/recipient/**",  // Allow public document retrieval for testing
+            "/api/files/public/**"
     };
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;

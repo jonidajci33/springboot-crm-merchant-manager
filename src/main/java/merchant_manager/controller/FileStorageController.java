@@ -111,7 +111,7 @@ public class FileStorageController {
         }
     }
 
-    @GetMapping("/signed-url/{fileId}")
+    @GetMapping("/public/signed-url/{fileId}")
     @Operation(
         summary = "Get signed URL",
         description = "Create or retrieve a cached signed URL for secure file access with 1 hour expiration. " +

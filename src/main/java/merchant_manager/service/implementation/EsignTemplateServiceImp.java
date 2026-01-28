@@ -48,7 +48,7 @@ public class EsignTemplateServiceImp implements EsignTemplateService {
                     esignTemplate.setLastUpdatedBy(user.getUsername());
                     savedEsignTemplate = save(esignTemplate);
                 }else{
-                    FileMetadata newFile = cloudStorageService.uploadFile(file);
+                    FileMetadata newFile = cloudStorageService.uploadFile(file, false);
                     esignTemplate.setCreatedBy(user.getUsername());
                     esignTemplate.setFileMetadata(newFile);
                     esignTemplate.setLastUpdatedBy(user.getUsername());
@@ -57,7 +57,7 @@ public class EsignTemplateServiceImp implements EsignTemplateService {
                 }
             }
         } else {
-            FileMetadata newFile = cloudStorageService.uploadFile(file);
+            FileMetadata newFile = cloudStorageService.uploadFile(file, false);
             esignTemplate.setFileMetadata(newFile);
             esignTemplate.setCreatedAt(ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime());
             esignTemplate.setCreatedBy(user.getUsername());

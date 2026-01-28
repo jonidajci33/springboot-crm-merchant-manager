@@ -10,7 +10,7 @@ import java.util.List;
 public interface CloudStorageService {
 
 
-    FileMetadata uploadFile(MultipartFile file);
+    FileMetadata uploadFile(MultipartFile file, Boolean skipUser);
 
     /**
      * Download a file from cloud storage
