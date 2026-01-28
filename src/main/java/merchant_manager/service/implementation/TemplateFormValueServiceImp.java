@@ -62,6 +62,8 @@ public class TemplateFormValueServiceImp implements TemplateFormValueService {
                         merchantServiceImp.save(merchant);
                         currentRecordId = merchant.getId();
                         break;
+                    default:
+                        throw new CustomExceptions.CustomValidationException("Record creation not supported for menu ID: " + menuId + ". Please provide a recordId.");
                 }
             }
             for (AddValueRequest addValueRequest : addValueRequests) {

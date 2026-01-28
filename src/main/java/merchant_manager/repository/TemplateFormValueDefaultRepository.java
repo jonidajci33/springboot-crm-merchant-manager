@@ -56,4 +56,20 @@ public interface TemplateFormValueDefaultRepository extends JpaRepository<Templa
     void deleteByMenuIdAndRecordIdAndUser(@Param("menuId") Long menuId,
                                           @Param("recordId") Long recordId,
                                           @Param("user") User user);
+
+    @Query("SELECT tfvd FROM TemplateFormValueDefault tfvd " +
+           "WHERE tfvd.templateFormDefault.template.id = :templateId " +
+           "AND tfvd.templateFormDefault.searchContact = true " +
+           "AND tfvd.recordId IN :recordIds")
+    List<TemplateFormValueDefault> findByTemplateIdAndSearchContactTrueAndRecordIds(
+            @Param("templateId") Long templateId,
+            @Param("recordIds") List<Long> recordIds);
+
+    @Query("SELECT tfvd FROM TemplateFormValueDefault tfvd " +
+           "WHERE tfvd.templateFormDefault.template.id = :templateId " +
+           "AND tfvd.templateFormDefault.searchMerchant = true " +
+           "AND tfvd.recordId IN :recordIds")
+    List<TemplateFormValueDefault> findByTemplateIdAndSearchMerchantTrueAndRecordIds(
+            @Param("templateId") Long templateId,
+            @Param("recordIds") List<Long> recordIds);
 }

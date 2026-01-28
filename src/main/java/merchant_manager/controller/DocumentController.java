@@ -2,7 +2,9 @@ package merchant_manager.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import merchant_manager.models.DTO.RecipientDocumentResponseDTO;
 import merchant_manager.models.Document;
+import merchant_manager.models.enums.RecipientStatus;
 import merchant_manager.service.implementation.DocumentServiceImp;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -52,5 +54,23 @@ public class DocumentController {
     public ResponseEntity<Void> deleteDocument(@PathVariable Long id) {
         documentService.deleteDocument(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/recipient/{token}")
+    @Operation(summary = "Get recipient and document by token", description = "Retrieve recipient and their associated document using the recipient's token")
+    public ResponseEntity<RecipientDocumentResponseDTO> getRecipientDocumentByToken(@PathVariable String token) {
+        RecipientDocumentResponseDTO response = documentService.getRecipientDocumentByToken(token);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping(value = "/sign", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Sign or decline a document", description = "Sign or decline a document using recipient token. If signing, upload the signed file. If declining, file is optional.")
+    public ResponseEntity<Document> signDocument(
+            @RequestParam("token") String token,
+            @RequestParam("status") RecipientStatus status,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
+
+        Document updatedDocument = documentService.signDocument(token, status, file);
+        return ResponseEntity.ok(updatedDocument);
     }
 }

@@ -22,17 +22,8 @@ public class MerchantTplServiceImp implements MerchantTplService {
 
     @Override
     public List<MerchantTpl> createMerchantTpls(MerchantTplRequest request) {
-        Merchant merchant = merchantRepository.findById(request.getMerchantId())
-                .orElseThrow(() -> new RuntimeException("Merchant not found with id: " + request.getMerchantId()));
 
-        List<MerchantTpl> merchantTpls = new ArrayList<>();
-
-        for (String tpl : request.getTpls()) {
-            MerchantTpl merchantTpl = new MerchantTpl();
-            merchantTpl.setMerchant(merchant);
-            merchantTpl.setTpl(tpl);
-            merchantTpls.add(merchantTpl);
-        }
+        List<MerchantTpl> merchantTpls = request.getMerchantTplList();
 
         return merchantTplRepository.saveAll(merchantTpls);
     }

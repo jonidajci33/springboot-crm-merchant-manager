@@ -1,12 +1,10 @@
 package merchant_manager.models.enums;
 
-public enum DocumentStatus {
+public enum RecipientStatus {
 
     PENDING,
 
-    SENT,
-
-    COMPLETE,
+    SIGNED,
 
     DECLINED
 

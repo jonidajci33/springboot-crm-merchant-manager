@@ -41,6 +41,7 @@ public class TemplateFormDefaultServiceImp implements TemplateFormDefaultService
     }
 
     @Override
+    @Transactional
     public List<TemplateFormDefault> addFieldToDefaultTemplate(Long menuId, Long companyId, List<TemplateFormDefault> templateForm) {
         try {
             User user = userServiceImp.getLoggedUser();

@@ -31,7 +31,9 @@ public class SecurityConfiguration {
             "/api/email/**",
             "/v3/api-docs/**",
             "/swagger-ui/**",
-            "/swagger-ui.html"
+            "/swagger-ui.html",
+            "/api/documents/sign",
+            "/api/documents/recipient/**"  // Allow public document retrieval for testing
     };
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
@@ -45,7 +47,7 @@ public class SecurityConfiguration {
                         req.requestMatchers(WHITE_LIST_URL)
                                 .permitAll()
                                 .requestMatchers("/user/secure/**").hasAnyAuthority(ROLE_SUPERUSER.name())
-                                .requestMatchers("/api/**").hasAnyAuthority(ROLE_USER.name(), ROLE_SUPERUSER.name())
+                                .requestMatchers("/api/**").hasAnyAuthority(ROLE_USER.name(), ROLE_SUPERUSER.name(), ROLE_ADMIN.name())
                                 .anyRequest()
                                 .authenticated()
                 )
