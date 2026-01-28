@@ -33,4 +33,9 @@ public class UserController {
         return ResponseEntity.ok(userServiceImp.getLoggedUser());
     }
 
+    @GetMapping({"/company/{companyId}/users", "/company/companyId={companyId}/users"})
+    public ResponseEntity<List<User>> getUsersByCompanyId(@PathVariable Long companyId) {
+        return ResponseEntity.ok(userServiceImp.getUsersByCompanyId(companyId));
+    }
+
 }

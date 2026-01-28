@@ -68,33 +68,11 @@ public class TemplateFormValueDefaultSpecification {
                         break;
 
                     case "GREATER_THAN":
-                        try {
-                            Double numericValue = Double.parseDouble(value);
-                            predicates.add(criteriaBuilder.greaterThan(
-                                    criteriaBuilder.function("CAST", Double.class,
-                                            root.get("value"),
-                                            criteriaBuilder.literal("double precision")),
-                                    numericValue
-                            ));
-                        } catch (NumberFormatException e) {
-                            // If not a valid number, no records will match
-                            predicates.add(criteriaBuilder.disjunction());
-                        }
-                        break;
-
                     case "LESS_THAN":
-                        try {
-                            Double numericValue = Double.parseDouble(value);
-                            predicates.add(criteriaBuilder.lessThan(
-                                    criteriaBuilder.function("CAST", Double.class,
-                                            root.get("value"),
-                                            criteriaBuilder.literal("double precision")),
-                                    numericValue
-                            ));
-                        } catch (NumberFormatException e) {
-                            // If not a valid number, no records will match
-                            predicates.add(criteriaBuilder.disjunction());
-                        }
+                    case "GREATER_THAN_OR_EQUAL":
+                    case "LESS_THAN_OR_EQUAL":
+                        // Numeric operators are handled in-service to avoid DB cast errors on non-numeric values.
+                        predicates.add(criteriaBuilder.disjunction());
                         break;
 
                     default:

@@ -57,6 +57,9 @@ public class TemplateFormDefault extends BaseModel{
     @Column(name = "search_merchant")
     private Boolean searchMerchant;
 
+    @Column(name = "search_lead")
+    private Boolean searchLead;
+
     @PrePersist
     private void generateKey() {
         if (this.key == null || this.key.isEmpty()) {

@@ -5,9 +5,11 @@ import merchant_manager.auth.RegisterRequest;
 import merchant_manager.auth.SetPassUsernameRequest;
 import merchant_manager.customExceptions.CustomExceptions;
 import merchant_manager.emailService.EmailService;
+import merchant_manager.models.Company;
 import merchant_manager.models.User;
 import merchant_manager.models.enums.AccountStatus;
 import merchant_manager.models.enums.Role;
+import merchant_manager.repository.CompanyRepository;
 import merchant_manager.repository.UserRepository;
 import merchant_manager.service.UserService;
 import org.springframework.security.core.Authentication;
@@ -25,12 +27,18 @@ public class UserServiceImp implements UserService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final TemplateServiceImp templateServiceImp;
+    private final CompanyRepository companyRepository;
 
-    public UserServiceImp(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, EmailService emailService, TemplateServiceImp templateServiceImp) {
+    public UserServiceImp(UserRepository userRepository,
+                          BCryptPasswordEncoder passwordEncoder,
+                          EmailService emailService,
+                          TemplateServiceImp templateServiceImp,
+                          CompanyRepository companyRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
         this.templateServiceImp = templateServiceImp;
+        this.companyRepository = companyRepository;
     }
 
     @Override
@@ -68,6 +76,24 @@ public class UserServiceImp implements UserService {
         return user;
     }
 
+    @Override
+    public List<User> getUsersByCompanyId(Long companyId) {
+        try {
+            User currentUser = getLoggedUser();
+            boolean hasAccess = currentUser.getRole() == Role.ROLE_SUPERUSER ||
+                    companyRepository.existsByIdAndUserId(companyId, currentUser.getId());
+            if (!hasAccess) {
+                throw new CustomExceptions.UnauthorizedAccessException("This user does not have permission to view users for this company");
+            }
+            return userRepository.findByCompanyId(companyId);
+        } catch (CustomExceptions.UnauthorizedAccessException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error fetching users for company: {}", e.getMessage(), e);
+            throw new CustomExceptions.CustomValidationException("Error fetching users for company: " + e.getMessage());
+        }
+    }
+
     public User setPassAndUsername(SetPassUsernameRequest request) {
 
         User user = findById(request.getId());
@@ -96,7 +122,16 @@ public class UserServiceImp implements UserService {
             user.setEmail(request.getEmail());
             user.setPhone(request.getPhone());
             user.setRole(Role.ROLE_USER);
-            return save(user);
+            user.setCompanyId(request.getCompanyId());
+            User savedUser = save(user);
+            if (request.getCompanyId() != null && request.getCompanyId() > 0) {
+                Company company = companyRepository.findById(request.getCompanyId())
+                        .orElseThrow(() -> new CustomExceptions.ResourceNotFoundException("Company not found with id: " + request.getCompanyId()));
+                savedUser.getCompanies().add(company);
+                savedUser = save(savedUser);
+            }
+            templateServiceImp.addTemplatesForUser(savedUser);
+            return savedUser;
         }
         throw new CustomExceptions.CustomValidationException("Username already exists");
 

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ConfigDTO {
+    private String leadSearch;
     private String contactSearch;
     private String merchantSearch;
 }

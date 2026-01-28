@@ -32,4 +32,6 @@ public interface TemplateFormDefaultService {
     TemplateFormDefault findByTemplateIdAndSearchContact(Long templateId, Boolean searchCustomer);
 
     TemplateFormDefault findByTemplateIdAndSearchMerchant(Long templateId, Boolean searchMerchant);
+
+    TemplateFormDefault findByTemplateIdAndSearchLead(Long templateId, Boolean searchLead);
 }

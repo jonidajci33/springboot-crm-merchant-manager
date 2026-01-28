@@ -3,11 +3,11 @@ package merchant_manager.service.implementation;
 import lombok.AllArgsConstructor;
 import merchant_manager.customExceptions.CustomExceptions;
 import merchant_manager.models.*;
-import merchant_manager.models.enums.Role;
 import merchant_manager.repository.TemplateDefaultRepository;
 import merchant_manager.repository.TemplateRepository;
 import merchant_manager.service.TemplateService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -36,6 +36,26 @@ public class TemplateServiceImp implements TemplateService {
                 templateDefaultRepository.save(template);
             }
 //        }
+    }
+
+    @Override
+    @Transactional
+    public void addTemplatesForUser(User user) {
+        List<Menu> menus = menuSeviceImp.getMenus();
+        for (Menu menu : menus) {
+            Optional<Template> existing = templateRepository.findByUserIdAndMenuId(user.getId(), menu.getId());
+            if (existing.isEmpty()) {
+                Template template = new Template(
+                        ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime(),
+                        ZonedDateTime.now(ZoneId.of("America/New_York")).toLocalDateTime(),
+                        user.getUsername(),
+                        user.getUsername(),
+                        menu,
+                        user
+                );
+                templateRepository.save(template);
+            }
+        }
     }
 
     @Override

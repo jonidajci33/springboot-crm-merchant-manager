@@ -28,12 +28,19 @@ public class User implements UserDetails {
     private String phone;
     private String companyName;
     private String jobTitle;
+    @Column(name = "company_id", nullable = false)
+    private Long companyId = 0L;
     @Enumerated(EnumType.STRING)
     private AccountStatus accountStatus;
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "user_company",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "company_id")
+    )
     @JsonIgnore
     private List<Company> companies = new ArrayList<>();
 
@@ -134,6 +141,14 @@ public class User implements UserDetails {
 
     public void setJobTitle(String jobTitle) {
         this.jobTitle = jobTitle;
+    }
+
+    public Long getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
     }
 
     public AccountStatus getAccountStatus() {

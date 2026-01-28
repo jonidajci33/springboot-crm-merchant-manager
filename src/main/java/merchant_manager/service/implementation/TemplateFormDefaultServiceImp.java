@@ -6,6 +6,7 @@ import merchant_manager.customExceptions.CustomExceptions;
 import merchant_manager.models.*;
 import merchant_manager.models.DTO.ConfigDTO;
 import merchant_manager.models.enums.Role;
+import merchant_manager.repository.CompanyRepository;
 import merchant_manager.repository.TemplateFormDefaultRepository;
 import merchant_manager.service.TemplateFormDefaultService;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class TemplateFormDefaultServiceImp implements TemplateFormDefaultService
     private final TemplateFormDefaultRepository templateFormDefaultRepository;
     private final UserServiceImp userServiceImp;
     private final TemplateDefaultServiceImp templateServiceImp;
+    private final CompanyRepository companyRepository;
 
     @Override
     public List<TemplateFormDefault> getColumnsByMenuIdAndCompanyId(Long menuId, Long companyId) {
@@ -42,9 +44,7 @@ public class TemplateFormDefaultServiceImp implements TemplateFormDefaultService
     public List<TemplateFormDefault> addFieldToDefaultTemplate(Long menuId, Long companyId, List<TemplateFormDefault> templateForm) {
         try {
             User user = userServiceImp.getLoggedUser();
-            boolean hasCompany = user.getCompanies()
-                    .stream()
-                    .anyMatch(c -> c.getId().equals(companyId));
+            boolean hasCompany = companyRepository.existsByIdAndUserId(companyId, user.getId());
             if (!hasCompany) {
                 throw new CustomExceptions.UnauthorizedAccessException("This user does not have permission to view dynamic records");
             }
@@ -109,5 +109,27 @@ public class TemplateFormDefaultServiceImp implements TemplateFormDefaultService
     @Override
     public TemplateFormDefault findByTemplateIdAndSearchMerchant(Long templateId, Boolean searchMerchant) {
         return templateFormDefaultRepository.findByTemplateIdAndSearchMerchant(templateId, true).orElseThrow(() -> new CustomExceptions.ResourceNotFoundException("Key for Search Merchant not found with key: " + templateId));
+    }
+
+    @Override
+    public TemplateFormDefault findByTemplateIdAndSearchLead(Long templateId, Boolean searchLead) {
+        return templateFormDefaultRepository.findByTemplateIdAndSearchLead(templateId, true).orElseThrow(() -> new CustomExceptions.ResourceNotFoundException("Key for Search Lead not found with key: " + templateId));
+    }
+
+    public ConfigDTO getConfig(Long companyId) {
+        TemplateDefault templateLead = templateServiceImp.findByMenuIdAndCompanyId(4L, companyId);
+        TemplateDefault templateCustomer = templateServiceImp.findByMenuIdAndCompanyId(5L, companyId);
+        TemplateDefault templateMerchant = templateServiceImp.findByMenuIdAndCompanyId(6L , companyId);
+
+        TemplateFormDefault templateFormDefaultLead = findByTemplateIdAndSearchLead(templateLead.getId(), true);
+        TemplateFormDefault templateFormDefaultCustomer = findByTemplateIdAndSearchContact(templateCustomer.getId(), true);
+        TemplateFormDefault templateFormDefaultMerchant = findByTemplateIdAndSearchMerchant(templateMerchant.getId(), true);
+
+        ConfigDTO configDTO = new ConfigDTO();
+        configDTO.setLeadSearch(templateFormDefaultLead.getKey());
+        configDTO.setContactSearch(templateFormDefaultCustomer.getKey());
+        configDTO.setMerchantSearch(templateFormDefaultMerchant.getKey());
+
+        return configDTO;
     }
 }

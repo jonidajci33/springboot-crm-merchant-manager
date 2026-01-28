@@ -5,10 +5,10 @@ import merchant_manager.customExceptions.CustomExceptions;
 import merchant_manager.models.Company;
 import merchant_manager.models.User;
 import merchant_manager.repository.CompanyRepository;
+import merchant_manager.repository.UserRepository;
 import merchant_manager.service.CompanyService;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,23 +17,35 @@ import java.util.List;
 public class CompanyServiceImp implements CompanyService {
 
     private final CompanyRepository companyRepository;
+    private final UserRepository userRepository;
     private final UserServiceImp userServiceImp;
     private final TemplateServiceImp  templateServiceImp;
 
-    public CompanyServiceImp(CompanyRepository companyRepository, UserServiceImp userServiceImp, TemplateServiceImp templateServiceImp) {
+    public CompanyServiceImp(CompanyRepository companyRepository,
+                             UserRepository userRepository,
+                             UserServiceImp userServiceImp,
+                             TemplateServiceImp templateServiceImp) {
         this.companyRepository = companyRepository;
+        this.userRepository = userRepository;
         this.userServiceImp = userServiceImp;
         this.templateServiceImp = templateServiceImp;
     }
 
     @Override
+    @Transactional
     public Company createCompany(Company company) {
         try {
             User currentUser = getCurrentUser();
-            company.setUser(currentUser);
             company.setCreatedBy(currentUser.getUsername());
             Company company_saved = companyRepository.save(company);
-            templateServiceImp.addDefaultTemplateToUser(currentUser,  company_saved);
+            User managedUser = userRepository.findById(currentUser.getId())
+                    .orElseThrow(() -> new CustomExceptions.ResourceNotFoundException("User not found"));
+            managedUser.getCompanies().add(company_saved);
+            if (managedUser.getCompanyId() == null || managedUser.getCompanyId() == 0L) {
+                managedUser.setCompanyId(company_saved.getId());
+            }
+            userRepository.save(managedUser);
+            templateServiceImp.addDefaultTemplateToUser(managedUser,  company_saved);
             log.info("Creating company: {} for user: {}", company_saved.getName(), currentUser.getUsername());
             return company_saved;
         } catch (Exception e) {

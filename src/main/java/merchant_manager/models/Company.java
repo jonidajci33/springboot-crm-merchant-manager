@@ -6,6 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "company")
@@ -41,8 +45,9 @@ public class Company extends BaseModel {
     @Column(length = 1000)
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToMany(mappedBy = "companies", fetch = FetchType.LAZY)
     @JsonIgnore
-    private User user;
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<User> users = new ArrayList<>();
 }

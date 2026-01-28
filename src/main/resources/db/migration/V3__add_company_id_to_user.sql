@@ -1,0 +1,2 @@
+ALTER TABLE _user
+    ADD COLUMN company_id BIGINT NOT NULL DEFAULT 0;

@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import merchant_manager.models.DTO.ConfigDTO;
 import merchant_manager.models.TemplateFormDefault;
 import merchant_manager.service.implementation.TemplateFormDefaultServiceImp;
 import org.springframework.http.HttpStatus;
@@ -119,4 +120,24 @@ public class TemplateFormDefaultController {
         templateFormDefaultService.removeFieldFromTemplate(keys);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/config")
+    @Operation(
+            summary = "Get Config"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Columns successfully retrieved",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TemplateFormDefault.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "404", description = "Template not found")
+    })
+    public ResponseEntity<ConfigDTO> getConfig(
+            @Parameter(description = "Company ID", required = true)
+            @RequestParam Long companyId
+    ) {
+        ConfigDTO dto = templateFormDefaultService.getConfig(companyId);
+        return ResponseEntity.ok(dto);
+    }
+
 }

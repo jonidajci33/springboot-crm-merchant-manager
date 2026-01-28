@@ -6,6 +6,7 @@ import merchant_manager.models.*;
 import merchant_manager.models.DTO.*;
 import merchant_manager.repository.TemplateFormDefaultRepository;
 import merchant_manager.repository.TemplateFormValueDefaultRepository;
+import merchant_manager.repository.CompanyRepository;
 import merchant_manager.service.DynamicRecordService;
 import merchant_manager.util.TemplateFormValueDefaultSpecification;
 import org.springframework.data.jpa.domain.Specification;
@@ -22,13 +23,12 @@ public class DynamicRecordServiceImp implements DynamicRecordService {
     private final TemplateFormValueDefaultRepository templateFormValueDefaultRepository;
     private final TemplateDefaultServiceImp templateServiceImp;
     private final UserServiceImp userServiceImp;
+    private final CompanyRepository companyRepository;
 
     @Override
     public DynamicRecordsSimplePageDTO getDynamicRecordsSimple(DynamicRecordsRequestDTO request) {
         User user = userServiceImp.getLoggedUser();
-        boolean hasCompany = user.getCompanies()
-                .stream()
-                .anyMatch(c -> c.getId().equals(request.getCompanyId()));
+        boolean hasCompany = companyRepository.existsByIdAndUserId(request.getCompanyId(), user.getId());
         if (!hasCompany) {
             throw new CustomExceptions.UnauthorizedAccessException("This user does not have permission to view dynamic records");
         }
@@ -98,6 +98,30 @@ public class DynamicRecordServiceImp implements DynamicRecordService {
             return recordIds;
         }
 
+        if (filter == null) {
+            return recordIds;
+        }
+
+        if (isNumericOperator(filter.getOperator())) {
+            Optional<Double> targetValue = parseDoubleSafe(filter.getValue());
+            if (targetValue.isEmpty()) {
+                return Collections.emptyList();
+            }
+
+            // Fetch values for this field and record IDs, then filter numerically in-memory
+            Specification<TemplateFormValueDefault> spec = TemplateFormValueDefaultSpecification
+                    .filterByFieldAndValue(filter.getFieldKey(), null, recordIds);
+
+            Double target = targetValue.get();
+            return templateFormValueDefaultRepository.findAll(spec).stream()
+                    .map(v -> new AbstractMap.SimpleEntry<>(v.getRecordId(), parseDoubleSafe(v.getValue())))
+                    .filter(e -> e.getValue().isPresent())
+                    .filter(e -> compareNumeric(e.getValue().get(), target, filter.getOperator()))
+                    .map(Map.Entry::getKey)
+                    .distinct()
+                    .collect(Collectors.toList());
+        }
+
         // Use Specification to build database query with filtering
         Specification<TemplateFormValueDefault> spec = TemplateFormValueDefaultSpecification
                 .filterByFieldAndValue(filter.getFieldKey(), filter, recordIds);
@@ -107,6 +131,42 @@ public class DynamicRecordServiceImp implements DynamicRecordService {
                 .map(TemplateFormValueDefault::getRecordId)
                 .distinct()
                 .collect(Collectors.toList());
+    }
+
+    private boolean isNumericOperator(String operator) {
+        if (operator == null) {
+            return false;
+        }
+        String op = operator.toUpperCase();
+        return op.equals("GREATER_THAN") ||
+                op.equals("LESS_THAN") ||
+                op.equals("GREATER_THAN_OR_EQUAL") ||
+                op.equals("LESS_THAN_OR_EQUAL");
+    }
+
+    private Optional<Double> parseDoubleSafe(String value) {
+        if (value == null) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(Double.parseDouble(value.trim()));
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
+    }
+
+    private boolean compareNumeric(double actual, double target, String operator) {
+        if (operator == null) {
+            return false;
+        }
+        String op = operator.toUpperCase();
+        return switch (op) {
+            case "GREATER_THAN" -> actual > target;
+            case "LESS_THAN" -> actual < target;
+            case "GREATER_THAN_OR_EQUAL" -> actual >= target;
+            case "LESS_THAN_OR_EQUAL" -> actual <= target;
+            default -> false;
+        };
     }
 
     /**
